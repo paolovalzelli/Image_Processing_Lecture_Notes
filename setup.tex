@@ -1,65 +1,92 @@
-\documentclass[a4paper,15pt]{book}
-
-\usepackage[export]{adjustbox}
-\usepackage{amsmath, amssymb}
-\usepackage[italian, british]{babel}
-\usepackage{booktabs, makecell}
-\usepackage[font=scriptsize]{caption}
-\usepackage{fancyhdr}
-\usepackage{float}
-\usepackage[T1]{fontenc}
-\usepackage[letterpaper,top=1.9cm,bottom=2cm,left=2.2cm,right=2.2cm,marginparwidth=1.7cm]{geometry}
-\usepackage{gensymb}
-\usepackage{graphicx}
-\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+% --- Codifica e Font ---
 \usepackage[utf8]{inputenc}
-\usepackage{multirow}
-\usepackage{ragged2e} 
-\usepackage{sidecap}
-\usepackage{siunitx}
-\usepackage{soul}
-\usepackage{subcaption}
-\usepackage{textcomp}
-\usepackage{tikz}
-\usepackage{wallpaper}
-\usepackage{wrapfig}
-\usepackage[table,dvipsnames]{xcolor}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}         % Font vettoriale standard
+\usepackage[english]{babel}  % Lingua inglese
+\usepackage{microtype}       % Migliora la giustificazione del testo
 
-\usetikzlibrary{arrows.meta, positioning, shapes.geometric}
+% --- Geometria e Layout ---
+\usepackage[a4paper, top=3cm, bottom=3cm, left=2.5cm, right=2.5cm, bindingoffset=8mm]{geometry}
+\usepackage{emptypage}       % Rimuove header/footer dalle pagine vuote
 
-\hypersetup{colorlinks=true, linkcolor=black}
-
+% --- Header e Footer (Stile Libro) ---
+\usepackage{fancyhdr}
+\setlength{\headheight}{14.5pt}
 \pagestyle{fancy}
-\fancyhead{}
-\fancyhead[LE,RO]{\leftmark} % mostra il nome del capitolo in alto
-\fancyfoot[C]{\thepage} % numero di pagina in basso al centro
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[LO]{\nouppercase{\rightmark}}
+\fancyhead[RE]{\nouppercase{\leftmark}}
+\renewcommand{\headrulewidth}{0.4pt}
 
-\setlength{\headheight}{15pt}
+% --- Matematica e Simboli ---
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+\usepackage{siunitx}
+\sisetup{mode=match}
 
-\definecolor{colore1}{RGB}{173,216,230}  % Azzurro chiaro  
-\definecolor{colore2}{RGB}{43,53,255}    % Blu intenso      
-\definecolor{colore3}{RGB}{0,213,213}    % Turchese        
-\definecolor{colore4}{RGB}{60,255,30}    % Verde brillante  
-\definecolor{colore5}{RGB}{244,244,0}    % Giallo brillante 
-\definecolor{colore6}{RGB}{255,128,64}   % Arancione        
-\definecolor{colore7}{RGB}{255,0,0}      % Rosso                    
-\definecolor{colore8}{RGB}{128,0,0}      % Bordeaux              
-\definecolor{colore9}{RGB}{255,0,255}    % Magenta               
-\definecolor{colore0}{RGB}{255,255,245}  % panna   
-\definecolor{gray}{RGB}{128,128,128}     % grigio
-\definecolor{black}{RGB}{0,0,0}          % nero
+% --- Macro Semantiche ---
+\newcommand{\vect}[1]{\mathbf{#1}}
+\newcommand{\matr}[1]{\mathbf{#1}}
+\newcommand{\iu}{\mathrm{i}}
+\newcommand{\fourier}[1]{\mathcal{F}\left\{#1\right\}}
+\newcommand{\ifourier}[1]{\mathcal{F}^{-1}\left\{#1\right\}}
+\DeclareMathOperator{\Reale}{Re}
+\DeclareMathOperator{\Imag}{Im}
 
-\definecolor{COLORE1}{RGB}{173,216,230}  % Azzurro chiaro  
-\definecolor{COLORE2}{RGB}{43,53,255}    % Blu intenso      
-\definecolor{COLORE3}{RGB}{0,213,213}    % Turchese        
-\definecolor{COLORE4}{RGB}{60,255,30}    % Verde brillante  
-\definecolor{COLORE5}{RGB}{244,244,0}    % Giallo brillante 
-\definecolor{COLORE6}{RGB}{255,128,64}   % Arancione        
-\definecolor{COLORE7}{RGB}{255,0,0}      % Rosso                    
-\definecolor{COLORE8}{RGB}{128,0,0}      % Bordeaux              
-\definecolor{COLORE9}{RGB}{255,0,255}    % Magenta               
-\definecolor{COLORE0}{RGB}{255,255,245}  % panna   
-\definecolor{GRAY}{RGB}{128,128,128}     % grigio
-\definecolor{BLACK}{RGB}{0,0,0}          % nero
+% --- Immagini e Grafica ---
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage[x11names]{xcolor}
 
-%\pagecolor{colore0} 
+% --- Configurazione Caption ---
+\usepackage[font=small, labelfont=bf, tableposition=top, figureposition=bottom]{caption}
+
+% --- Tabelle e Liste ---
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{enumitem}
+
+%Definizione colonna centrata per tabularx (spostata qui per pulizia)
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+
+% --- Box Sostitutivo Leggero (No Tcolorbox) ---
+% Definisco un box giallo semplice per le note importanti
+\newsavebox{\impbox}
+\newenvironment{importantbox}[1]
+  {\par\vspace{1em}\noindent
+   \begin{center}
+   \begin{lrbox}{\impbox}
+   \begin{minipage}{0.95\textwidth}
+   \fcolorbox{yellow!50!black}{yellow!5!white}{%
+     \begin{minipage}{0.95\linewidth}
+       \medskip
+       \textbf{#1}\par\smallskip
+  }
+  {
+       \medskip
+     \end{minipage}%
+   }
+   \end{minipage}
+   \end{lrbox}
+   \usebox{\impbox}
+   \end{center}
+   \par\vspace{1em}}
+
+% --- Link e Riferimenti ---
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    filecolor=magenta,
+    urlcolor=blue!80!black,
+    pdftitle={Image Processing Lecture Notes},
+    pdfauthor={Paolo Valzelli},
+    bookmarksnumbered=true
+}

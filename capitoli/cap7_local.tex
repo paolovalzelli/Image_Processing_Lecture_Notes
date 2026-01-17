@@ -1,24 +1,23 @@
-\chapter{Local operations}
-
-\hrulefill
+\chapter{Local Operations}
+\label{ch:local_operations}
 
 \section{Convolution}
 
-The neighbourhood of input pixels that determines the grey level of each output pixel is defined by the \textbf{kernel}, which is usually a square of $M \times M$ pixels.
+The neighbourhood of input pixels determining the grey level of each output pixel is defined by the \textbf{kernel}, typically a square of $M \times M$ pixels.
 The output grey level is expressed as a weighted sum of the intensities of each pixel in the kernel.
-These operations are sometimes referred to as \textit{filters}, and can be used to improve the quality of the image, both by reducing degradation and by enhancing desired features.
+These operations are sometimes referred to as \textit{filters} and can be used to improve image quality, both by reducing degradation and by enhancing desired features.
 They can be described as discrete \textbf{convolutions} between the input image and the kernel.
-A convolution is an operation between two arrays of different sizes that produces a third array.
-In the context of image processing, the first array is the image, while the second is the kernel, which is much smaller.
-The convolution is performed by positioning the kernel, which defines the weights of each pixel in the neighbourhood to determine the output grey level, on every pixel of the image within its boundaries.
-This is followed by adding the numbers together to obtain the output value.
+Convolution is an operation between two arrays of different sizes that produces a third array.
+In the context of image processing, the first array is the image, while the second is the kernel, which is significantly smaller.
+The convolution is performed by positioning the kernel (which defines the weights of each pixel in the neighbourhood to determine the output grey level) on every pixel of the image within its boundaries.
+The values are then summed to obtain the output value.
 
 \subsection{Definition of convolution}
 
 The convolution between two continuous functions is defined as:
 
 \begin{equation}
-    c(x,y) = a(x,y) \ast b(x,y) = \int_{- \infty}^{+ \infty} \int_{- \infty}^{+ \infty} a(\chi, \zeta) b(x - \chi, y - \zeta) d\chi d\zeta
+    c(x,y) = a(x,y) \ast b(x,y) = \int_{- \infty}^{+ \infty} \int_{- \infty}^{+ \infty} a(\chi, \zeta) b(x - \chi, y - \zeta) \, d\chi \, d\zeta
 \end{equation}
 
 For discrete functions, the definition becomes:
@@ -27,89 +26,102 @@ For discrete functions, the definition becomes:
     c[m,n] = a[m,n] \ast b[m,n] = \sum_{j = -\infty}^{+\infty} \sum_{k = -\infty}^{+\infty} a[j,k] b[m - j, n - k]
 \end{equation}
 
-In the context of digital images, where the domain is finite for both dimensions, in particular:
+In the context of digital images, where the domain is finite for both dimensions:
 
 \begin{equation}
-    c[m,n] = \sum_{j = 0}^{M - 1} \sum_{k = 0}^{+N - 1} a[j,k] b[m - j, n - k]
+    c[m,n] = \sum_{j = 0}^{M - 1} \sum_{k = 0}^{N - 1} a[j,k] b[m - j, n - k]
 \end{equation}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\linewidth]{immagini/convolution.png}
+    \caption{Output of a convolution.}
+    \label{fig:convolution}
+\end{figure}
 
 \subsection{Image boundaries}
 
-The convolution is defined on every pixel of the original image but the boundaries, that is, if the kernel is a square of $M \times M$ pixels, the output image will lose $M-1$ rows and columns.
-There are, however, some ways to deal with these pixels, even though the loss of such a small number of them compared to the total number of pixel in the image is usually negligible.
-One way is simply to artificially add pixels with a value equal to zero outside the original image so to make it possible to define the convolution on every pixel, another possible solution is to copy the last row or column or the ones on the opposite side of the image, depending on the case.
+Convolution is defined on every pixel of the original image except for the boundaries; if the kernel is a square of $M \times M$ pixels, the output image will lose $M-1$ rows and columns.
+There are, however, several ways to deal with these pixels, although the loss of such a small number compared to the total number of pixels is usually negligible.
+One method is to artificially add pixels with a value of zero outside the original image to define the convolution for every pixel; another solution involves replicating the last row or column, or those on the opposite side of the image, depending on the case.
 
 \subsection{Separable kernels}
 
-The computational cost of convolution depends on the number of pixels in the kernel; for local operations, this is given by $M^2$ single operations for each pixel in the image.
-However, if a kernel is separable in the product of two one-dimensional vectors:
+The computational cost of convolution depends on the number of pixels in the kernel; for local operations, this equates to $M^2$ single operations per pixel.
+However, if a kernel is separable into the product of two one-dimensional vectors:
 
 \begin{equation}
-    h[j,k] = h_{row}[k] h_{col}[j]
+    h[j,k] = h_{\mathrm{row}}[k] \cdot h_{\mathrm{col}}[j]
 \end{equation}
 
 \noindent then the convolution can be computed as:
 
 \begin{equation}
-    c[m,n] = \sum_{j=0}^{J-1} \left\{ \sum_{k=0}^{K-1} h_{row}[k] a[m - j, n - k] \right\} h_{col}[j]
+    c[m,n] = \sum_{j=0}^{J-1} \left\{ \sum_{k=0}^{K-1} h_{\mathrm{row}}[k] a[m - j, n - k] \right\} h_{\mathrm{col}}[j]
 \end{equation}
 
-The benefit is derived from the reduction of complexity, which can be significant if the kernel is large, as the number of convolutions goes from $M^2$ to $2M$.
+This reduces complexity, which can be significant for large kernels, as the number of operations decreases from $M^2$ to $2M$.
 
-\section{Noise reduction}
+\section{Noise Reduction}
 
-One of the main ways in which the quality of an image can be improved is by applying \textbf{noise reduction}.
-It is possible to reduce statistical noise by averaging over time using point operations; however, it is also possible to average over space by using local operations.
-The two main categories of spatial filters are \textit{linear filters}, which utilise convolution, and \textit{non-linear filters}, which are based on ordering the grey levels of the pixels in the neighbourhood.
+One of the primary methods for improving image quality is \textbf{noise reduction}.
+It is possible to reduce statistical noise by averaging over time using point operations; however, it is also possible to average over space using local operations.
+The two main categories of spatial filters are \textit{linear filters}, some of which rely on the convolution, and \textit{non-linear filters}, some of which are based on ordering pixel grey levels in the neighbourhood.
 
 \subsection{Common noise reduction filters}
 
 Common noise reduction local filters include:
 
 \begin{itemize}
-    \item \texttt{mean filter}: the kernel is defined as a normalised matrix with equal entries that gives the average grey level of the neighbourhood as output:
+    \item \textbf{mean filter}: The kernel is defined as a normalised matrix with equal entries, outputting the average grey level of the neighbourhood:
+    
     \begin{equation}
         \frac{1}{9} \cdot \begin{bmatrix}
             1 & 1 & 1 \\ 1 & 1 & 1 \\ 1 & 1 & 1 
         \end{bmatrix}
     \end{equation}
-    Larger kernels are more robust to statistical noise, but reduce even more the sharpness of the edges in the image;
-    \item \texttt{Gaussian filter}: the kernel is defined as a normalised matrix where the weight of each entry approximates a Gaussian distribution, so that the pixel that are closer to the centre of the neighbourhood are more influential in the output:
+    
+    Larger kernels are more robust to statistical noise but further reduce edge sharpness.
+    
+    \item \textbf{Gaussian smoothing}: The kernel is defined as a normalised matrix where weights approximate a Gaussian distribution, giving more influence to pixels closer to the centre:
+    
     \begin{equation}
         \frac{1}{16} \cdot \begin{bmatrix}
             1 & 2 & 1 \\ 2 & 4 & 2 \\ 1 & 2 & 1 
         \end{bmatrix}
     \end{equation}
-    Both mean and Gaussian filters are examples of \textbf{mask filtering}; that is, they highlight details whose shape is similar to that of the kernel;
-    \item \texttt{median filter}: this is not a linear operation, since it assigns to the output pixel the median grey level of the neighbourhood defined by the kernel.
-    This operation requires the ranking of values instead of a linear combination.
-    It can be very useful to eliminate noise due to the reconstruction algorithm or to defective pixels (which cause some of them to reach extremal values), since it is robust to outliers in the brightness values.
+    
+    Both mean and Gaussian filters are examples of \textbf{mask filtering}; they highlight details with shapes similar to the kernel.
+    
+    \item \textbf{median filter}: This is a non-linear operation that assigns the median grey level of the neighbourhood to the output pixel.
+    This operation requires ranking values rather than linear combination.
+    It is highly effective for eliminating noise due to reconstruction algorithms or defective pixels (which cause extremal values), as it is robust to outliers in brightness values.
 \end{itemize}
 
-Noise reduction techniques suppress the high frequencies in the image, effectively smoothing it.
+Noise reduction techniques suppress high frequencies in the image, effectively smoothing it.
 
-\section{Edge detection and enhancement}
+\section{Edge Detection and Enhancement}
 
-The quality of an image can be improved by enhancing a desirable feature, such as edges.
-An \textbf{edge} is a set of pixels in which the brightness changes sharply; that is, a small region in which there is high contrast.
-Since the same definition can be applied to noise, it follows that operations that reduce noise also tend to make the edges blurry, whereas those that enhance it also tend to amplify noise.
-One possible solution to distinguish noise from an edge is to consider the shape, since for the former it is random, whereas for the latter it is organised in a  well defined line.
-\textbf{Edge detection} algorithms are able to extract the borders of objects from an image, whereas \textbf{edge enhancement} algorithms make them sharper.
+Image quality can be improved by enhancing desirable features, such as edges.
+An \textbf{edge} is a set of pixels where brightness changes sharply, a small region with high contrast.
+Since this definition also applies to noise, operations that reduce noise tend to blur edges, while those that enhance edges tend to amplify noise.
+One way to distinguish noise from an edge is by shape: noise is random, whereas an edge is organised into a well-defined line.
+\textbf{Edge detection} algorithms extract object borders, while \textbf{edge enhancement} algorithms make them sharper.
 
 \subsection{Edge detection by derivatives}
 
-An edge can be detected from the gradient of the grey level, so many filters use \textbf{first and second derivatives} and provide a binary image in which edge pixels are white while all the others are black as the output.
-Some are sensitive to the direction and require the subsequent application of different filters and the combination of the results to correctly detect edges in arbitrary directions, whereas others are not sensitive to the direction.
+An edge can be detected from the grey level gradient; thus, many filters use \textbf{first and second derivatives}, providing a binary image where edge pixels are white and others are black.
+Some are sensitive to direction, requiring the application of different filters and the combination of results to detect edges in arbitrary directions, while others are direction-insensitive.
 
-\textbf{First derivative filters} detect edges by searching maximum or minimum values, whereas \textbf{second derivative filters} detect a change in the sign.
+\textbf{First derivative filters} detect edges by searching for maximum or minimum values, whereas \textbf{second derivative filters} detect a change in sign \textcolor{gray}{(zero-crossing)}.
 
-Partial differentiation in the $x$ direction in a 2D continuous space can be described as:
+Partial differentiation in the $x$ direction in a 2D continuous space is described as:
 
 \begin{equation}
     \frac{\partial I (x,y)}{\partial x} = \lim_{h \rightarrow0} \frac{I (x + h, y) - I (x,y)}{h}
 \end{equation}
 
-Since a digital image is a discrete 2D space, the increment $h$ cannot become infinitely small but is limited to the size of a single pixel, which is equal to one; so that it is possible to obtain the following approximation for the partial differentiation:
+Since a digital image is a discrete 2D space, the increment $h$ is limited to the size of a single pixel ($h=1$), yielding the approximation:
 
 \begin{equation}
     \frac{\partial I (x,y)}{\partial x} \approx \frac{I (x + 1, y) - I (x,y)}{1}
@@ -117,33 +129,33 @@ Since a digital image is a discrete 2D space, the increment $h$ cannot become in
 
 \noindent and similarly in the $y$ direction.
 
-Therefore, it is possible to obtain the first derivative of the grey level in an image by taking the convolution with the following \textbf{filter kernels for partial differentiation}:
+Therefore, the first derivative of the grey level can be obtained by convolution with the following \textbf{filter kernels for partial differentiation}:
 
 \begin{equation}
     D_x = \begin{bmatrix}
         0 & 0 & 0 \\ 0 & -1 & 1 \\ 0 & 0 & 0
     \end{bmatrix}
-    \text{ } \text{ } \text{ } \text{ } \text{ } \text{ } \text{ } \text{ } \text{ } \text{ } \text{ } \text{ } \text{ } \text{ } \text{ } 
+    \quad
     D_y = \begin{bmatrix}
         0 & 1 & 0 \\ 0 & -1 & 0 \\ 0 & 0 & 0
     \end{bmatrix}
 \end{equation}
 
-It is possible to make these filters more robust to noise by increasing the distance between the pixels, thanks to the \textbf{doubling differentiation effect}.
-The \textbf{filter kernels for enhanced partial differentiation} are therefore defined as:
+These filters can be made more robust to noise by increasing the distance between pixels, utilising the \textbf{doubling differentiation effect}.
+The \textbf{filter kernels for enhanced partial differentiation} are defined as:
 
 \begin{equation}
-    D^{enh}_x = \begin{bmatrix}
+    D^{\mathrm{enh}}_x = \begin{bmatrix}
         0 & 0 & 0 \\ -1 & 0 & 1 \\ 0 & 0 & 0
     \end{bmatrix}
-    \text{ } \text{ } \text{ } \text{ } \text{ } \text{ } \text{ } \text{ } \text{ } \text{ } \text{ } \text{ } \text{ } \text{ } \text{ } 
-    D^{enh}_y = \begin{bmatrix}
+    \quad
+    D^{\mathrm{enh}}_y = \begin{bmatrix}
         0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & -1 & 0
     \end{bmatrix}
 \end{equation}
 
 \textbf{Second derivative filters} can detect edges in arbitrary directions.
-The second derivative is obtained as the first derivative of the first dderivative; that is:
+The second derivative is obtained as the first derivative of the first derivative:
 
 \begin{equation}
     \begin{bmatrix}
@@ -159,27 +171,27 @@ The second derivative is obtained as the first derivative of the first dderivati
     \end{bmatrix}
 \end{equation}
 
-Edge detectors are \textit{zero sum operators}, so homogeneous regions become black pixels.
-Since they are sensitive to noise, they are usually applied after noise reduction.
+Edge detectors are \textit{zero sum operators}, causing homogeneous regions to become black pixels.
+Since they are sensitive to noise, they are usually applied following noise reduction.
 
 \subsection{Edge enhancement}
 
-When a digital image is blurry, for example, due to suboptimal focus, it is desirable to make the edges sharper, thereby increasing their contrast (and, therefore, also the noise).
-\textbf{Edge enhancement} techniques make the gradient of the edges steeper by subtracting the Laplacian from the original image.
+When a digital image is blurry (e.g., due to suboptimal focus), it is desirable to sharpen edges, increasing their contrast (and consequently, the noise).
+\textbf{Edge enhancement} techniques steepen the edge gradient by subtracting the Laplacian from the original image.
 If the edge of the original image is defined as $I(x)$, the enhanced image is defined as:
 
 \begin{equation}
     I(x) - L(x) = I(x) - \frac{d^2 I}{dx^2}
 \end{equation}
 
-\begin{figure}
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7 \linewidth]{immagini/edge_enhancement.png}
     \caption{Edge enhancement by subtraction of the Laplacian.}
     \label{fig:edge_enhancement}
 \end{figure}
 
-Usually, it is possible to set the \textit{amplification factor} $A$ for the edge enhancement:
+Usually, an edge enhancement factor, or\textit{amplification} factor, $A$ can be set for edge enhancement:
 
 \begin{equation}
     E = I(x,y) - A \cdot L(x,y) = 
@@ -201,7 +213,7 @@ Usually, it is possible to set the \textit{amplification factor} $A$ for the edg
 Common edge detection local filters include:
 
 \begin{itemize}
-    \item \texttt{Prewitt filters}: they consist of a filter kernel for enhanced partial differentiation and a mean filter in the perpendicular direction, so that they are able to detect structures in a specified direction.
+    \item \textbf{Prewitt filters}: These consist of a filter kernel for enhanced partial differentiation and a mean filter in the perpendicular direction, allowing detection of structures in a specified direction.
     They are defined by a separable kernel:
     \begin{equation}
         D^{\mathrm{Prewitt}}_x = k \cdot \begin{bmatrix}
@@ -215,7 +227,8 @@ Common edge detection local filters include:
         1 & 0 & -1
     \end{bmatrix}
     \end{equation}
-    \item \texttt{Sobel filters}: they work in a similar way, but attribute a greater weight to the pixels that are closer to the centre of the kernel:
+    
+    \item \textbf{Sobel filters}: These operate similarly but attribute greater weight to pixels closer to the kernel centre:
     \begin{equation}
         D^{\mathrm{Sobel}}_x = k \cdot \begin{bmatrix}
         1 & 0 & -1 \\ 2 & 0 & -2 \\ 1 & 0 & -1
@@ -229,8 +242,15 @@ Common edge detection local filters include:
     \end{bmatrix}
     \end{equation}
     Sobel operators can detect edges in the $x, y$ and diagonal ($xy, yx$) directions.
-    They are often used as \textit{line finders} and allow to compute the \textit{edge map image} by summing the absolute values of all images filtered with a Sobel operator and then creating a binary image with grey level thresholding;
-    \item \texttt{Laplacian filters}: they are given by the combination of second derivatives along both axes:
+    They are often used as \textit{line finders} and allow for the computation of the \textit{edge map image} by summing the absolute values of all images filtered with a Sobel operator, followed by creating a binary image via grey level thresholding.
+    
+    \item \textbf{Laplacian filters}: These filters are based on the application of the Laplacian operator:
+    
+    \begin{equation}
+        \nabla^2 I(x,y) = \nabla \cdot \nabla I(x,y) = \frac{\partial^2 I(x,y)}{(\partial x)^2} + \frac{\partial^2 I(x,y)}{(\partial y)^2}
+    \end{equation}
+    
+    They are given by the combination of second derivatives along both axes:
     \begin{equation}
     \begin{bmatrix}
         1 & -2 & 1
@@ -245,24 +265,24 @@ Common edge detection local filters include:
     \end{bmatrix}
     \end{equation}
     The kernel is not separable in this case.
-    Images that are filtered with the Laplacian operator have the following properties:
+    Images filtered with the Laplacian operator exhibit the following properties:
     \begin{itemize}
-        \item the grey level of homogeneous regions becomes 0;
-        \item edges have both positive (white) and negative (black) boundaries;
-        \item edge detection does not depend on the direction.
+        \item Homogeneous regions become 0 (black);
+        \item Edges have both positive (white) and negative (black) boundaries;
+        \item Edge detection is direction-independent.
     \end{itemize}
 \end{itemize}
 
-The most common edge enhancement filter is the \texttt{unsharp filter}.
+The most common edge enhancement filter is the \textbf{unsharp filter}.
 
-\section{Morphological operations}
+\section{Morphological Operations}
 
-\textbf{Morphological operations} are non-linear operations that change the shapes of objects, especially in binary images.
-\textbf{Structuring elements} (SE), small binary images that define the neighbourhood of each pixel specified by connectivity, play the same role as kernels in convolutions.
-The origin of the structuring elements is usually one of its pixels.
-They act as geometric filters that change the shape of the objects within an image.
+\textbf{Morphological operations} are non-linear operations that modify the shape of objects, particularly in binary images.
+\textbf{Structuring Elements} (SE) — small binary images defining the neighbourhood of each pixel specified by connectivity - play the same role as kernels in convolutions.
+The origin of the structuring element is usually one of its pixels.
+They act as geometric filters altering the shape of objects within an image.
 
-\begin{figure}
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\linewidth]{immagini/structuring_elements.png}
     \caption{Structuring elements.}
@@ -279,15 +299,15 @@ The \textbf{dilation} between two objects $A$ and $B$ can be defined as:
     A \oplus B = \{ c \in E^2 : c = a + b, a \in A, b \in B \}
 \end{equation}
 
-It is also possible to define dilation as the union of all the \textit{translations}:
+Dilation can also be defined as the union of all \textit{translations}:
 
 \begin{equation}
-    A \oplus B = \bigcup_{b \in B} A_b = \bigcup_{a \in A} B_a \text{ , where } A_t = \{ c \in E^2 : c = a + t, a \in A \}
+    A \oplus B = \bigcup_{b \in B} A_b = \bigcup_{a \in A} B_a \quad \text{where } A_t = \{ c \in E^2 : c = a + t, a \in A \}
 \end{equation}
 
-Applying a dilation to an object means enlarging its boundaries by turning all background pixels connected to the object according to the definition of connectivity defined by the SE to object pixels.
-Dilation can be used to fill the holes and cracks that may appear inside an object due to thresholding (this can be useful for text recognition) and to smooth object boundaries.
-Furthermore, it allows for the detection of edges by taking the difference between dilated and original images.
+Applying dilation to an object enlarges its boundaries by turning all background pixels connected to the object (according to the definition of connectivity defined by the SE) into object pixels.
+Dilation can be used to fill holes and cracks appearing inside an object due to thresholding (useful for text recognition) and to smooth object boundaries.
+Furthermore, it allows for edge detection by taking the difference between the dilated and original images.
 
 The \textbf{erosion} between two objects $A$ and $B$ can be defined as:
 
@@ -295,22 +315,27 @@ The \textbf{erosion} between two objects $A$ and $B$ can be defined as:
     A \ominus B = \{ c \in E^2 : c + b \in A, \forall b \in B \}
 \end{equation}
 
-It is also possible to define dilation as the intersection of all the (negative) \textit{translations}:
+Erosion can also be defined as the intersection of all (negative) \textit{translations}:
 
 \begin{equation}
     A \ominus B = \{ c \in E^2 : B_c \subseteq A \} = \bigcap_{b \in B} A_{-b} = \bigcap_{a \in A} B_{-a}
 \end{equation}
 
-Erosion turns every pixel of the object that is not connected to the others according to the definition of connectivity defined by the SE into background pixels.
-It can be utilised to remove thin bridges between different objects so that counting them becomes easier or to eliminate features that are smaller than the SE.
+Erosion turns every pixel of the object that is not connected to others (according to the definition of connectivity defined by the SE) into background pixels.
+It is utilised to remove thin bridges between different objects, facilitating counting, or to eliminate features smaller than the SE.
 
-\begin{table}[H]
+% Definizione colonna centrata per tabularx (se non definita nel setup)
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+
+\begin{table}[htbp]
     \centering
-    \renewcommand{\arraystretch}{1.4} % più spazio tra righe
-    \begin{tabular}{|c|c|c|}
-        \hline
+    \caption{Summary of the properties of dilation and erosion (BG = Background, FG = Foreground).}
+    \label{tab:dilation_erosion}
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabularx}{\textwidth}{l Y Y}
+        \toprule
          & \textbf{Dilation} & \textbf{Erosion} \\
-        \hline
+        \midrule
         \textbf{Definition} &
         $\begin{cases}
             1 & \text{if any neighbour } = 1,\\
@@ -320,26 +345,24 @@ It can be utilised to remove thin bridges between different objects so that coun
             0 & \text{if any neighbour } = 0,\\
             1 & \text{otherwise.}
         \end{cases}$ \\
-        \hline
+        \midrule
         \textbf{Visual} &
-            \makecell{BG pixels remain if the SE is included} &
-            \makecell{FG pixels remain if the SE is included} \\
-        \hline
+            BG pixels remain if the SE is included &
+            FG pixels remain if the SE is included \\
+        \midrule
         \textbf{Effects} & The object expands & The object shrinks \\
-        \hline
-    \end{tabular}
-    \caption{Summary of the properties of dilation and erosion, where BG stands for background and FG for foreground.}
-    \label{tab:dilation_erosion}
+        \bottomrule
+    \end{tabularx}
 \end{table}
 
-If the SE is equal, dilation and erosion are related to each other.
+If the SE is equal, dilation and erosion are related.
 It is possible to define:
 
 \begin{equation}
-     \overset{\smile}{A} = \{ \overset{\smile}{b} : \overset{\smile}{b} = - b , b \in B \}   
+     \overset{\smile}{B} = \{ \overset{\smile}{b} : \overset{\smile}{b} = - b , b \in B \}     
 \end{equation}
 
-So that the following relationships are true:
+The following relationships hold:
 
 \begin{align}
     ( A \oplus B )^c & = A^c \ominus \overset{\smile}{B} \\
@@ -353,7 +376,7 @@ In particular, if $B$ is symmetric:
     ( A \ominus B )^c & = A^c \oplus B
 \end{align}
 
-\begin{figure}
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\linewidth]{immagini/dilation_erosion.png}
     \caption{Relationships between dilation and erosion with the same SE.}
@@ -369,7 +392,7 @@ The \textbf{opening} of an image is defined as an erosion followed by a dilation
 \end{equation}
 
 Opening breaks narrow isthmuses and eliminates small islands and sharp peaks, creating gaps between objects.
-It can block structures that are smaller than the SE, acting as a filter with the desired shape.
+It can suppress structures smaller than the SE, acting as a filter with the desired shape.
 
 The \textbf{closing} of an image is defined as a dilation followed by an erosion with the same SE:
 
@@ -377,35 +400,49 @@ The \textbf{closing} of an image is defined as a dilation followed by an erosion
     A \bullet B = (A \oplus B ) \ominus B
 \end{equation}
 
-Closing fuses narrow breaks and long, thin cracks, and eliminates small holes in the objects, filling gaps.
-It can eliminate apparent holes in a binary image due to reflections.
+Closing fuses narrow breaks and long, thin cracks, and eliminates small holes in objects, filling gaps.
+It can eliminate apparent holes in a binary image caused by reflections.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\linewidth]{immagini/opening-closing.png}
+    \caption{Opening and closing with the same structuring element.}
+    \label{fig:opening-closing}
+\end{figure}
 
 \subsection{Region filling and skeleton}
 
-\textbf{Region filling} is a combination of dilations with the same SE that requires knowledge of the boundary of the object and a pixel inside it, denominated \textbf{seed}.
-It is defined as a series of consecutive dilations that start from the seed and stop when the boundary is reached; for this reason, it is also known as \textit{conditional dilation}.
-If $A$ indicates a region and $B$ the SE, then region filling can be described as:
+\textbf{Region filling} is a combination of dilations with the same SE, requiring knowledge of the region boundary ($\beta(A)$) and a pixel inside it, known as the \textbf{seed} ($X_0$).
+It is defined as a series of consecutive dilations starting from the seed and stopping when the boundary is reached; for this reason, it is also known as \textit{conditional dilation}.
+If $A$ indicates a region and $B$ the SE, region filling can be described as:
 
 \begin{equation}
-    X_F = X_k \cup A \text{ , where } X_k = (X_{k-1} \oplus B ) \cap A^c
+    X_F = X_k \cup A \quad \text{where } X_k = (X_{k-1} \oplus B ) \cap A^c
 \end{equation}
 
-The final step of the process is the union of the obtained object and the initial boundary.
+The final step is the union of the obtained object and the initial boundary.
 It can fill holes more effectively than dilation or closing.
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.5\linewidth]{immagini/region_filling.png}
+    \caption{Region filling steps.}
+    \label{fig:region_filling}
+\end{figure}
+
 \textbf{Skeleton} is a combination of erosions with the same SE, from which the opening of the object is then subtracted.
-It allows for the exact reconstruction of the original object, so it can be useful to preserve the basic information about the shape of the object in a compressed way.
+It allows for the exact reconstruction of the original object, serving as a useful tool for preserving basic shape information in a compressed format.
 
 The skeleton operation can be described as:
 
 \begin{equation}
-    S(A) = \bigcup_{k=0}^K S_k (A) \text{ , where } S_k (A) = (A \ominus k B) - [(A \ominus kB) \circ B ]
+    S(A) = \bigcup_{k=0}^K S_k (A) \quad \text{where } S_k (A) = (A \ominus k B) - [(A \ominus kB) \circ B ]
 \end{equation}
 
-The reconstruction is given by:
+Reconstruction is given by:
 
 \begin{equation}
     A = \bigcup_{k=0}^K (S_k (A) \oplus kB)
 \end{equation}
 
-It is not guaranteed that the skeleton resulting from an image is either maximally thin, or connected, or minimally eroded.
+It is not guaranteed that the resulting skeleton is maximally thin, connected, or minimally eroded.

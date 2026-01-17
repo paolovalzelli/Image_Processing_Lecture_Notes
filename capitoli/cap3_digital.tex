@@ -1,322 +1,335 @@
-\chapter{Digital images introduction}
+\chapter{Introduction to Digital Images}
+\label{ch:digital_images}
 
-\hrulefill
+\section{Image Formation}
 
-\section{Image formation}
-
-When a 3D object is mapped in the 2D image, there are geometrical relationships between the location and size of the objects and their representations, and radiometrical relationships between the amount of light that radiates from a point of the object and the amount of light that impinges on the correspondent image point.
+When a 3D object is mapped onto a 2D image plane, geometric relationships govern the location and size of the representations, while radiometric relationships determine the intensity of light radiating from the object and impinging on the corresponding image point.
 
 \subsection{Pinhole camera}
 
-The first models of camera were boxes with a small hole that started to appear during the XVI century.
-The size of an image depends both on the size of the object and on its distance from the camera.
+The earliest camera models were boxes with a small aperture, known as the \textit{pinhole}, which began to appear during the 16th century. 
+The size of the resulting image depends on both the object's size and its distance from the camera.
 
-\begin{figure}[htb]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\linewidth]{immagini/pin-hole_camera.png}
     \caption{Pinhole camera geometry.}
     \label{fig:pin-hole_camera}
 \end{figure}
 
-As it can be observed in fig. \ref{fig:pin-hole_camera}, distant objects appear smaller:
+As observed in Figure \ref{fig:pin-hole_camera}, distant objects appear smaller according to the similarity of triangles:
 
 \begin{equation}
     \frac{y}{d} = \frac{h}{f}
 \end{equation}
 
-where $y$ is the object size, $d$ its distance from the pinhole, $h$ is the corresponding image size, and $f$ its distance from the pinhole, that is, its \textit{focal distance}.
-$O$ represents the \textit{optical centre}.
-If $uv$ describes the image plane, the acquisition device is characterized by its coordinate system $uvz$, where $z$ is the \textit{optical axis}, the line that is perpendicular to the image plane and intercepts the optical center.
+where $y$ is the object size, $d$ is its distance from the pinhole, $h$ is the corresponding image size, and $f$ is the distance from the pinhole to the image plane, known as the \textit{focal distance}. 
+The point $O$ represents the \textit{optical centre}.
 
-This way we can map the point in the object space to the image plane:
+If $(u,v)$ describes the coordinate system of the image plane and the acquisition device is characterised by the system $(u,v,z)$, where $z$ is the \textit{optical axis} (perpendicular to the image plane and passing through the optical centre), we can map a point $M(x,y,z)$ in object space to a point $m(u,v)$ in the image plane:
 
 \begin{equation}
-    M(x,y,z) \longrightarrow m(u,v) \text{ ; where } u = \frac{fx}{z} \text{ , } v = \frac{fy}{z}
+    M(x,y,z) \longrightarrow m(u,v) \quad \text{where} \quad u = f \frac{x}{z}, \quad v = f \frac{y}{z}
 \end{equation}
 
 \subsection{Orthographic projection}
 
-It is possible to consider a useful approximation for objects whose size is significantly smaller than their distance from the optical centre and from the optical axis.
-In this case, the light rays can be considered to be parallel to the optical axis and orthogonal to the image plane, so that:
+A useful approximation, known as \textbf{orthographic projection}, applies when the size of the object is significantly smaller than its distance from the optical centre. 
+In this case, light rays are considered parallel to the optical axis and orthogonal to the image plane.
+If the object depth is $2 \Delta z$ and its average distance is $z_0$, with $\Delta z \ll z_0$:
 
 \begin{equation}
-    \frac{f}{z_0 + \Delta z} \approx \frac{f}{z_0 - \Delta z} \approx \frac{f}{z_0} \Longrightarrow u \approx \frac{f}{z_0} x, v \approx \frac{f}{z_0} y
+    \frac{f}{z_0 + \Delta z} \approx \frac{f}{z_0 - \Delta z} \approx \frac{f}{z_0} \implies u \approx \frac{f}{z_0} x, \quad v \approx \frac{f}{z_0} y
 \end{equation}
+
+This implies that magnification is essentially constant across the object.
 
 \subsection{Pinhole size}
 
-While a smaller pinhole produces sharper images, since it greatly reduces the amount of light that reaches the image plane, it requires a longer exposure time, which can be a problem with moving objects.
-On the contrary, a larger pinhole produces blurry edges in the image, because each point of the object becomes a spot on the image plane.
-The size of the pinhole is the main limit of this kind of acquisition device.
+The diameter of the pinhole presents a trade-off. 
+A smaller pinhole produces sharper images but drastically reduces the light flux reaching the sensor, requiring longer exposure times (which can be problematic for moving objects). 
+Conversely, a larger pinhole introduces blurring \textcolor{gray}{(geometric unsharpness)}, as each point of the object projects onto a finite spot \textcolor{gray}{(circle of confusion)} on the image plane.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.5\linewidth]{immagini/pin-hole_size.png}
+    \caption{Effects of pinhole size on the image.}
+    \label{fig:pin-hole_size}
+\end{figure}
 
 \subsection{Cameras with lenses}
 
-These cameras gather more light and then focus it on (almost) a single point in the image plane, so that exposure time can be reduced significantly.
+Cameras equipped with lenses gather significantly more light and focus it onto a single point on the image plane, allowing for reduced exposure times.
+The \textit{thin lens model} provides a useful approximation for simple optical systems.
 
-A useful approximation is that of the \textit{thin lens model}, often applied also to systems composed by a few lenses.
-
-\begin{figure}[htb]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\linewidth]{immagini/thin_lens.png}
     \caption{Thin lens model.}
     \label{fig:thin_lens}
 \end{figure}
 
-The distance from the optical centre of the object point is indicated by $u$, that of the image point by $v$, and that of the focal point by $f$.
-Given the relationship between these distances:
+Let $u$ be the object distance from the optical centre, $v$ the image distance, and $f$ the focal length. The thin lens equation relates these quantities:
 
 \begin{equation}
     \frac{1}{u} + \frac{1}{v} = \frac{1}{f}
 \end{equation}
 
-for parallel light rays, it follows that:
-
-\begin{equation}
-    u = \infty \Longrightarrow \frac{1}{u} = 0 \Longrightarrow v = f
-\end{equation}
+For rays coming from infinity ($u \to \infty$), the image forms at the focal plane ($v = f$).
 
 \subsection{Geometry of imaging devices}
 
-Most acquisition devices can be represented as a combination of lenses that concentrate light on an image plane where the image sensors, that convert the light into an electric signal, are located.
+Most acquisition devices consist of a combination of lenses that concentrate light onto an image plane where sensors convert the light into an electrical signal.
 
-In a 2D image, many object points are mapped to the same image point, so that all the information about depth is lost.
-One way to acquire such information is to use more images, thanks to \textit{stereoscopy}, that the human brain uses given two projections of the same space.
-A \textit{tomography} uses a large number, usually thousands, of images of the same object.
+Since 3D points project onto a 2D plane, depth information is inherently lost. 
+Depth can be recovered using techniques such as \textbf{stereoscopy} (using two views that mimick human binocular vision) or \textbf{tomography} (using thousands of projections, which is typical in medical imaging).
 
-\subsection{Field of view (FOV)}
+\subsection{Field Of View (FOV)}
 
-The \textbf{field of view} (FOV) is the cone from which the device accepts the incoming radiation.
-It determines how large the objects that can be covered by the camera are, so it has to be chosen according to the specific needs.
-
-Indicating with $f$ the focal length and with $(w,h)$ the effective area of the image sensor, it is possible to define:
+The \textbf{field of View} (FOV) is the angular extent of the scene captured by the camera. 
+It depends on the focal length $f$ and the sensor dimensions $(w, h)$.
 
 \begin{equation}
-    FOV_{Horiz.} = 2 arctan \left( \frac{w}{2f}\right) \text{ , } FOV_{Vert.} = 2 arctan \left( \frac{h}{2f}\right)
+    \text{FOV}_{\text{horiz}} = 2 \arctan \left( \frac{w}{2f}\right), \quad \text{FOV}_{\text{vert}} = 2 \arctan \left( \frac{h}{2f}\right)
 \end{equation}
 
-It is possible to reduce the FOV by increasing the focal distance.
+Increasing the focal length $f$ reduces the field of view \textcolor{gray}{(telephoto)}, while decreasing $f$ increases it \textcolor{gray}{(wide-angle)}.
 
-\subsubsection{\textbf{Example}}
+\paragraph{Example}
 
-Let a sensor have an effective area of $w \cdot h$ = 8.8 mm $\cdot$ 6.6 mm.
-Considering the focal lengths $f_1$ = 12 mm and $f_2$ = 50 mm, the effective FOVs result to be:
+Consider a sensor with effective area $w \times h = \SI{8.8}{\milli\meter} \times \SI{6.6}{\milli\meter}$.
 
-\begin{align}
-    FOV_{Horiz.} (f_1) = & 2 arctan \left( \frac{8.8}{2 \cdot 12}\right) \approx 40° \text{ , } FOV_{Vert.} (f_1)= 2 arctan \left( \frac{6.6}{2 \cdot 12}\right) \approx 30° \\
-    FOV_{Horiz.} (f_2) =  & 2 arctan \left( \frac{8.8}{2 \cdot 50}\right) \approx 10° \text{ , } FOV_{Vert.} (f_2)= 2 arctan \left( \frac{6.6}{2 \cdot 50}\right) \approx 7.5°
-\end{align}
+\begin{itemize}
+    \item For $f_1 = \SI{12}{\milli\meter}$:
+    \[ \text{FOV}_{\text{horiz}} = 2 \arctan \left( \frac{8.8}{2 \cdot 12}\right) \approx \ang{40}, \quad \text{FOV}_{\text{vert}} \approx \ang{30} \]
+    \item For $f_2 = \SI{50}{\milli\meter}$:
+    \[ \text{FOV}_{\text{horiz}} = 2 \arctan \left( \frac{8.8}{2 \cdot 50}\right) \approx \ang{10}, \quad \text{FOV}_{\text{vert}} \approx \ang{7.5} \]
+\end{itemize}
 
 \subsection{Magnification factor}
 
-The \textbf{magnification factor} is defined as the ratio between the size of the object in the image and that of the object in the space:
+The \textbf{magnification factor} $M$ is the ratio of the image size $x$ to the object size $X$:
 
 \begin{equation}
-    M = \frac{x}{X} = \frac{v}{u} = \frac{f}{u}
+    M = \frac{x}{X} = \frac{v}{u} \approx \frac{f}{u} \quad (\text{if } u \gg f)
 \end{equation}
 
-It is therefore proportional to the focal length.
-If $M>1$ there is \textit{magnification}.
-It is possible to increase the magnification factor by increasing the focal length.
+$M$ is proportional to the focal length. 
+If $M > 1$, the image is larger than the object (magnification).
 
-\subsubsection{\textbf{Example}}
+\paragraph{Example}
 
-Let an object with width $X$ = 0.5 m be placed at a distance $u$ = 3 m from a camera.
-Considering the focal lengths $f_1$ = 12 mm and $f_2$ = 50 mm, the widths of the images result to be:
+An object of width $X = \SI{0.5}{\meter}$ is placed at a distance $u = \SI{3}{\meter}$.
 
-\begin{align}
-    x(f_1) = & M(f_1) \cdot X = \left( \frac{12}{3000} \right) \cdot 500 = 2 mm \\
-    x(f_2) = & M(f_2) \cdot X = \left( \frac{50}{3000} \right) \cdot 500 = 8.33 mm
-\end{align}
+\begin{itemize}
+    \item For $f_1 = \SI{12}{\milli\meter}$: $x = \left( \dfrac{12}{3000} \right) \cdot 500 = \SI{2}{\milli\meter}$
+    \item For $f_2 = \SI{50}{\milli\meter}$: $x = \left( \dfrac{50}{3000} \right) \cdot 500 = \SI{8.33}{\milli\meter}$
+\end{itemize}
 
-So that a small focal distance determines a large FOV and a small magnification factor, and, vice versa, a large focal distance determines a small FOV and a large magnification factor.
+Thus, a small focal length yields a large FOV and small magnification, while a large focal length yields a small FOV and large magnification.
 
-\subsection{(Geometrical) optical distortions}
+\subsection{Optical distortions}
 
-Optical distortions tend to be more evident at a greater distance from the visual axis.
-One common example is the radial distortion, as in a fish-eye lens.
+Real optical systems introduce distortions, particularly far from the optical axis. 
+A common type is \textbf{radial distortion} \textcolor{gray}{(e.g., barrel distortion)}, that is prominent in fish-eye lenses.
 
-\subsection{Radiometry}
+\subsection{Lens radiometry}
 
-The amount of radiation that reaches a point of the image should (ideally) be the same as the one that exits the correspondent point of the object, but the size of the lens, the diaphragm, and the angle with respect to the optical axis all affect this quantity.
-If $d$ indicates the diameter of the lens, $\alpha$ the angle between the light ray and the optical axis, and $f$ the optical length; the irradiance of the image point $E(p)$ is related to the radiant exitance of the object point $L(P)$ through:
+Ideally, the radiance reaching the image matches the object radiance. 
+However, lens geometry affects irradiance.
+Let $d$ be the lens diameter, $f$ the focal length, and $\alpha$ the angle of the light ray with the optical axis. 
+The irradiance $E(p)$ at image point $p$ relates to object exitance $L(P)$ by the \textbf{cosine fourth law}:
 
 \begin{equation}
-    E(p) = L(P) \cdot \frac{\pi}{4} \cdot \left( \frac{d}{f} \right) ^2 \cdot cos^4 \alpha
+    E(p) = L(P) \cdot \frac{\pi}{4} \left( \frac{d}{f} \right)^2 \cos^4 \alpha
 \end{equation}
 
-This explains why images from a camera tend to be brighter toward the center.
-The amount of light $f(x,y)$ coming out from an object at point $(x,y)$ can be expressed as the product of the light coming from the source $i(x,y)$ and the \textit{surface reflectance} of the object $r(x,y)$:
+This effect, known as \textbf{vignetting}, causes images to be naturally brighter at the centre and darker at the periphery.
+
+The light $f(x,y)$ leaving an object is the product of the illumination $i(x,y)$ and the object's \textit{surface reflectance} $r(x,y)$:
 
 \begin{equation}
-    f(x,y) = i(x,y) \cdot r(x,y) \text{ , with } 0<f(x,y)<\infty \text{ , } 0<i(x,y)<\infty \text{ , } 0<r(x,y)<1
+    f(x,y) = i(x,y) \cdot r(x,y) \quad \text{with } 0 < r(x,y) < 1
 \end{equation}
 
-Surface reflectance depends on the properties of the surface, like colour or micro-geometry.
-Depending on the characteristics of the surface, there might be ideal specular objects, that act like perfect mirrors, or ideal diffusive (Lambertian) objects, or an intermediate case.
+Surface reflectance depends on the properties of the surface, such as colour or micro-geometry.
+Depending on the characteristics of the surface, there might be ideal specular objects that act like perfect mirrors, ideal diffusive (Lambertian) objects, or an intermediate case.
 
-\subsubsection{\textbf{Example}}
+\subsubsection{Examples of intensities and reflectance}
 
-In the case of visible light, some common values for the light source intensity are:
-
-\begin{table}[H]
+\begin{table}[htbp]
     \centering
-    \begin{tabular}{||c|c||}
-    \hline
-    \textbf{Light source} & \textbf{i(cd)} \\
-    \hline
-    Bright sunny day & 10000 \\
-    \hline
-    Cloudy day & 1000 \\
-    \hline
-    Office & 1000 \\
-    \hline
-\end{tabular}
-    \caption{Examples of light sources and their intensities.}
-    \label{tab:light_sources}
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \caption{Typical illumination intensities.}
+        \label{tab:light_sources}
+        \begin{tabular}{lc}
+            \toprule
+            \textbf{Light Source} & \textbf{Intensity $i$ [\unit{\candela}]} \\
+            \midrule
+            Bright sunny day & \num{10000} \\
+            Cloudy day & \num{1000} \\
+            Office & \num{100} \\
+            \bottomrule
+        \end{tabular}
+    \end{minipage}
+    \hfill 
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \caption{Typical surface reflectance values.}
+        \label{tab:surface_reflectances}
+        \begin{tabular}{lc}
+            \toprule
+            \textbf{Object} & \textbf{Reflectance $r$} \\
+            \midrule
+            Black velvet & 0.01 \\
+            White wall & 0.80 \\
+            Snow & 0.93 \\
+            \bottomrule
+        \end{tabular}
+    \end{minipage}
 \end{table}
 
-Some common values for surface reflectance are:
-
-\begin{table}[H]
+\begin{figure}[htbp]
     \centering
-    \begin{tabular}{||c|c||}
-    \hline 
-    \textbf{Object} & \textbf{r} \\
-    \hline
-    Black velvet & 0.01 \\
-    \hline
-    White wall & 0.80 \\
-    \hline
-    Snow & 0.93 \\
-    \hline
-\end{tabular}
-    \caption{Examples of objects and their surface reflectances.}
-    \label{tab:surface_reflectances}
-\end{table}
+    \includegraphics[width=0.5\linewidth]{immagini/reflectance.png}
+    \caption{Types of reflectance.}
+    \label{fig:reflectance}
+\end{figure}
 
-\subsection{Image formation}
+\section{Mathematical Model of Image Acquisition}
 
-An ideal acquisition device is a system that, given the amount of light from a scene as input $f(\xi, \eta)$, produces an acquired image as output $g(x,y)$, according to the relation:
+An ideal acquisition device transforms an input scene $f(\xi, \eta)$ into an output image $g(x,y)$ via the relation:
 
 \begin{equation}
-    g(x,y) = \int_{- \infty} ^{+ \infty} h (x,y, \xi, \eta) \cdot f (\xi, \eta) d \xi d \eta
+    g(x,y) = \int_{-\infty}^{+\infty} \int_{-\infty}^{+\infty} h(x,y, \xi, \eta) \cdot f(\xi, \eta) \, d\xi \, d\eta
 \end{equation}
 
-\noindent where $h$ is the \textbf{response function} of the system, that defines how much light is reflected from each point of the object in the point of the image, so it accounts for distortions introduced by the system.
-
-If the system is \textit{linear} and \textit{shift invariant}, the response depends solely on the distance between two points, instead of the absolute position:
+where $h$ is the \textbf{response function} \textcolor{gray}{( \textbf{point spread function (PSF)} or impulse response)} of the system.
+It defines how each point in the object space ($\xi, \eta$) contributes to the formation of the point in the image space ($x,y$), describing the distorsions introduced by the system.
+If the system is \textbf{linear} and \textbf{shift-invariant} \textcolor{gray}{(LSI)}, the response depends only on the coordinate difference, becoming a convolution:
 
 \begin{equation}
-    g(x,y) = \int_{- \infty} ^{+ \infty} h (x - \xi, y - \eta) \cdot f (\xi, \eta) d \xi d \eta
+    g(x,y) = \int_{-\infty}^{+\infty} \int_{-\infty}^{+\infty} h(x - \xi, y - \eta) \cdot f(\xi, \eta) \, d\xi \, d\eta
 \end{equation}
-
-\noindent $g(x,y)$ results to be the \textit{convolution} of the two functions.
 
 \subsection{Noise}
 
-The uncertainty associated with the recording of a signal is defined as \textbf{noise}.
-In a series of static images, the fluctuations in the intensity of the light at each point of the image are due to the statistical noise that is always present.
-The fluctuations are a way to measure the value of the noise that, in many cases, can be modeled as an additive component with a Gaussian function:
+Real signals contain \textbf{noise}, defined as random uncertainty. 
+In image sequences, statistical noise due to variations in the amount of radiation manifests as intensity fluctuations.
+It is typically modelled as an additive Gaussian component $n(x,y)$:
 
-\begin{equation}
-    g(x,y) = \int_{- \infty} ^{+ \infty} h (x - \xi, y - \eta) \cdot f (\xi, \eta) d \xi d \eta + n(x,y)
-\end{equation}
+\begin{align}
+    g(x,y) & = (h * f)(x,y) + n(x,y) \\
+    & = \int_{-\infty}^{+\infty} \int_{-\infty}^{+\infty} h(x - \xi, y - \eta) \cdot f(\xi, \eta) \, d\xi \, d\eta + n(x,y)
+\end{align}
 
-\noindent Other sources of (non-statistical) noise can be introduced by the acquisition device, such as \textit{electronic noise}.
-Larger values of statistical noise are to be expected if the statistics are low, that is, if a small number of photons are collected.
+Non-statistical noise sources are introduced by the acquisition device, such as \textit{electronic noise}, interferences, crosstalk \textcolor{gray}{ or photon counting statistics (shot noise) and electronic thermal noise}. 
+Low photon counts result in lower statistics and higher relative statistical noise.
 
-\section{Digital images}
+\section{Digital Images}
 
-\subsection{Digitization}
+\subsection{The digitisation process}
 
-A \textbf{digital image} is the numerical representation of an image, obtained through the \textbf{digitization}, a conversion that is carried out by two distinct processes: \textbf{sampling} and \textbf{quantization}.
-Images in the digital format are made available for computer processing.
-Since the signal function is continuous, it is made discrete by choosing a finite number of samples.
-The physical image is divided into small regions called \textbf{pixels}, or picture elements.
-Given a range of possible values for the light intensity, this is divided into a finite number of grey levels, then an interval is assigned to each pixel, so that a digital version of the image is obtained.
-The range of intensity requires the knowledge of both maximum and minimum intensity, both of which are determined by the acquisition device specifics, so that different images are comparable.
+A \textbf{digital image} is a numerical representation of a physical image obtained through \textbf{digitisation}, which comprises two steps:
 
-Each pixel is described by three numbers that represent the position inside the image (row and column) and its brightness (grey level).
-A digital image is therefore represented by a 2D matrix of numbers that describe the grey level of each pixel.
+\begin{enumerate}
+    \item \textbf{sampling:} measurement of the grey level of an image at each point.
+    \item \textbf{quantisation:} discretisation of amplitude values.
+\end{enumerate}
+
+The image is divided into discrete elements called \textbf{pixels} (picture elements). 
+Each pixel is described by two numbers representing the position inside the image (row and column) and a value (grey level) representing brightness.
+The dynamic range is determined by the minimum and maximum measurable intensities of the device.
+A digital image is therefore represented by a 2D matrix of numbers that defines the grey level of each pixel.
 
 \subsection{Definition of digital image}
 
-A digital image is a sampled, quantized function of two dimensions, sampled in an equally spaced rectangular grid pattern and quantized in equal intervals of amplitude.
+Formally, a digital image is a sampled, quantised 2D function defined on a rectangular grid.
+It is characterised by:
 
-A digital image is characterized by a \textit{spatial resolution} or sampling density, that depends on the pixel spacing of the acquisition device, often measured in $DPI$ (dots per inch) or $lp/mm$ (lines per millimetre), and by a \textit{grey-level resolution}, that is given by the number of grey levels, usually a power of 2 (256 levels can be expressed by 8 bits, or a single byte).
+\begin{itemize}
+    \item \textbf{spatial resolution:} sampling density, often measured in DPI (dots per inch) or lp/mm (lines per millimetre).
+    \item \textbf{grey-level resolution:} the number of quantisation levels, usually a power of 2 (e.g., 256 levels = 8 bits = 1 byte).
+\end{itemize}
 
 \subsection{Spatial sampling}
 
-Thanks to a Dirac delta function $\delta(x)$, it is possible to sample the image, choosing a point in the $x$ and $y$ domains.
-\textbf{Spatial sampling} can be described as a multiplication of the analogue, continuous function $f(x,y)$ (the physical image) and the function $s(x,y)$, that is a series of Dirac delta functions:
+Mathematically, spatial sampling is the multiplication of the continuous function $f(x,y)$ by a "comb" of Dirac delta functions $s(x,y)$:
 
 \begin{equation}
-    s(x,y) = \sum_{i = - \infty}^{+ \infty} \sum_{j = - \infty}^{+ \infty} \delta (x - i \Delta x, y - j \Delta y)
+    s(x,y) = \sum_{i=-\infty}^{+\infty} \sum_{j=-\infty}^{+\infty} \delta(x - i\Delta x, y - j\Delta y)
 \end{equation}
 
-This way it is not necessary to consider averaged values, but the values at single points, the nodes of the grid.
-Similarly, it is possible to carry out the quantization process.
+This extracts values only at the grid nodes, so that it is not necessary to consider averaged values.
 
-\subsection{Nyquist rate}
+The sampled image $f_c(x,y)$ can be written as:
 
-The proper pixel size needed for a good approximation should be comparable to the size of the smallest details that are required to be perceived from the image.
-The \textbf{Nyquist rate} is a way to express this principle: the sampling interval must not be greater than one half the size of the smallest resolvable feature of the image.
-The same idea should be applied in order to choose the proper number of grey levels.
+\begin{align}
+    f_c(x,y) & = s(x,y) \cdot f(x,y) = \left\{ \sum_{i=-\infty}^{+\infty} \sum_{j=-\infty}^{+\infty} \delta (x - i \Delta x, y - j \Delta y )\right\} \cdot f(x,y) \\
+    & = \sum_{i=-\infty}^{+\infty} \sum_{j=-\infty}^{+\infty} f(i \Delta x, j \Delta y) \cdot \delta (x - i \Delta x, y - j \Delta y)
+\end{align}
 
-\subsection{Aliasing}
+\subsection{Nyquist rate and aliasing} 
 
-Sampling a signal at a rate less than the Nyquist rate results in \textit{aliasing}, in which the higher frequency components of a signal take the identity of lower frequencies.
-An inaccurate representation of the original periodic signal is the consequence of not having taken enough samples.
-Aliasing is introduced if the size of pixels is increased too much.
+To enable proper reconstruction, the sampling interval must satisfy the \textbf{Nyquist rate criterion}: the sampling frequency must be at least twice the highest spatial frequency in the image (or pixel size $\le$ half the size of the smallest resolvable detail).
+Failing this leads to \textbf{aliasing}, where high-frequency patterns are misinterpreted as lower frequencies (e.g., Moiré patterns).
+The same criterion can be applied to choose the number of grey levels.
 
-\subsection{Grey-level quantization}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.5\linewidth]{immagini/aliasing.png}
+    \caption{Aliasing frequency.}
+    \label{fig:aliasing}
+\end{figure}
 
-The choice of the number of grey-levels, usually $L=2^n$, depends on the contrast in the image.
-The step should be smaller than one half of the smallest contrast that needs to be distinguished; otherwise, aliasing can occur.
+\subsection{Grey-level quantisation}
 
-\subsection{High and low resolution}
+The continuous intensity is mapped to $L = 2^k$ discrete levels.
+The quantisation step should be smaller than half the smallest distinguishable contrast to avoid aliasing \textcolor{gray}{(\textbf{false contouring})} (visible bands in smooth gradients).
+The quantisation step introduces a small \textit{quantisation error} in the sample.
+The range of values spanned by the grey levels is called \textbf{dynamic range}.
 
-High resolution is not inherently better, even if it contains more detailed information.
-Acquisition and visualization devices need to have the necessary resolution to support high resolutions, and the cost is higher both in storage and in time.
-Very high resolution is also more affected by statistical noise, since the pixels gather fewer photons.
+\subsection{Resolution trade-offs}
+
+Higher resolution captures more detail but increases storage and processing costs and requires compatible display hardware. 
+Furthermore, extremely high spatial resolution can decrease the Signal-to-Noise Ratio (SNR) per pixel, as smaller pixels collect fewer photons and are more affected by statistical noise.
 
 \subsection{Digital image representation}
 
-A digital image can be described as a matrix of $M \times N$ integer numbers ranging from 0 to $2^m-1$.
-It is also possible to use a more useful way to represent the digital image as a 1D vector, in which every pixel is identified by a single vector:
+A digital image is typically represented as an $M \times N$ matrix of integer numbers ranging from 0 to $2^m - 1$.
+For algebraic operations, it is useful to flatten the matrix into a 1D \textbf{lexicographic vector} $\vect{f}$:
 
 \begin{equation}
-    f(x,y) = \begin{bmatrix}
+    \vect{f}(x,y) = \begin{bmatrix}
         f(0,0) \\
-        ... \\
-        f(M-1,0) \\
+        \vdots \\
+        f(M-1, 0) \\
         f(0,1) \\
-        ... \\
-        f(M-1,1) \\
-        ... \\
-        f(0, N-1) \\
-        ... \\
-        (f(M-1,N-1)
+        \vdots \\
+        f(M-1, N-1)
     \end{bmatrix}
 \end{equation}
 
-This \textbf{lexicographic form} is usually preferable because it makes it possible to apply linear operators on the image as a matrix multiplication.
-If $\boldsymbol{H}$ is a matrix representing the function $\boldsymbol{f}$, that describes the acquisition system, and $\boldsymbol{n}$ is noise,
+Linear operations (like convolution) can then be expressed as matrix-vector multiplication. 
+If $\matr{H}$ is the system matrix \textcolor{gray}{(from the PSF)} and $\vect{n}$ is noise, the acquired image can be described as a linear combination of the original image:
 
 \begin{equation}
-    \boldsymbol{g} = \left[\boldsymbol{H} \right] \cdot \boldsymbol{f} + \boldsymbol{n}
+    \vect{g} = \matr{H} \vect{f} + \vect{n}
 \end{equation}
-
-The acquired image can be described as a linear combination of the original image.
 
 \subsection{Image quality}
 
-\textbf{Image quality} should be assessed before any kind of image processing, that usually aims to improve it.
-There are both subjective and objective parameters to assess such image quality.
-While subjective assessment requires an observer and is more time-consuming, expensive, and influenced by many sources of variability, it gives the best possible evaluation, since humans are the ultimate viewers.
-Objective evaluation aims to develop a quantitative measure of the distortions introduced in the digital images, comparing each pixel to those of an ideal, expected image, called \textit{phantom image}.
+Quality assessment is crucial for validating processing algorithms.
+
+\begin{itemize}
+    \item \textbf{Subjective assessment:} relies on human observers. It is the ultimate benchmark but is slow, expensive, and variable.
+    \item \textbf{Objective assessment:} uses mathematical metrics, such as the normalised mean squared error, to compare the image against a "phantom" (ideal reference) or ground truth, quantifying distortions numerically.
+\end{itemize}
+
+The main sources of image degradation include noise, optical distorsions, blurring, and artifacts.
 
 \subsection{Colour images}
 
-Colour images have very specific but limited applications and can be described by a set of three matrices, each one representing one of the primary colours.
-They can be treated just like the grey images.
+Colour images are typically represented as a stack of three matrices (channels), corresponding to the primary colours (e.g., red, green, blue). 
+Each channel is processed as an individual grey-level image.

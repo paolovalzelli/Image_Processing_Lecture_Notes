@@ -1,23 +1,22 @@
-\chapter{Image compression}
+\chapter{Image Compression}
+\label{ch:compression}
 
-\hrulefill
+\section{Aim of Image Compression}
 
-\section{Aim of image compression}
+Since digital images can require substantial storage capacity, \textbf{image compression} techniques are utilised to reduce storage space in archives or transmission time without significantly altering the image.
 
-Since digital images can require a lot of storage, some \textbf{image compression} techniques are utilised to reduce storage space in archives or transmission time without changing the image too much.
+\section{Redundancy and Irrelevancy}
 
-\section{Redundancy and irrelevancy}
+Certain information can be eliminated from an image without compromising its usability.
+Removing \textit{redundant} information does not affect image quality, whereas removing \textit{irrelevant} information does.
 
-Some information can be eliminated from the image without reducing its usability.
-Removing \textit{redundant} information does not affect the quality of the image, whereas removing \textit{irrelevant} information does.
+\section{Lossless Techniques}
 
-\section{Lossless techniques}
+\textbf{Lossless algorithms} allow for the exact recovery of the original image, exploiting the fact that some regions in an image may be uniform or homogeneous. 
+If noise causes small fluctuations in the grey level of consecutive pixels, it is possible to store only one grey level and the difference from that value for subsequent pixels.
+Certain techniques allow for the storage of smaller numbers using fewer bits, thereby reducing the space required for the image.
 
-\textbf{Lossless algorithms} allow the exact recovering of the original image, exploiting the fact that in an image some regions can be uniform or homogeneous. 
-If noise causes small fluctuations on the grey level of consecutive pixels, it is possible to only store one grey level and the difference from that value for the other pixels.
-Some techniques allow to store smaller numbers using fewer bits, thereby reducing the storing space required for the image.
+\section{Lossy Techniques}
 
-\section{Lossy techniques}
-
-It is also possible to cause small degradations to an image by applying \textbf{lossy algorithms} that can force approximately uniform regions in an image to become uniform.
-Different levels of compression are available and can be chosen according to the application.
+It is also possible to introduce minor degradations to an image by applying \textbf{lossy algorithms}, which can force approximately uniform regions to become perfectly uniform.
+Different compression levels are available and can be selected according to the specific application.

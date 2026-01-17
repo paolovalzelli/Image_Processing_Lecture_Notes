@@ -1,50 +1,56 @@
+\documentclass[11pt, a4paper, openany]{book}
+
 \input{setup}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.8em}
 
 \begin{document}
 
-\title{Image Processing}
-\author{Paolo Valzelli}
-\date{\today}
-\maketitle
+% --- Frontespizio ---
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    
+    {\Huge \bfseries Image Processing \par}
+    
+    \vspace{1.5cm}
+    {\Large \textsc{Lecture Notes} \par}
+    
+    \vspace{3cm}
+    
+    {\Large \textbf{Paolo Valzelli} \par}
+    
+    \vfill
 
+    {\large \textbf{ALMA MATER STUDIORUM - Università di Bologna} \par}
+    {\large Dipartimento di Fisica e Astronomia \par}
+    {\large Master's Degree Course \par}
+    
+    \vspace{1cm}
+    {\large \today \par}
+    \vspace*{2cm}
+\end{titlepage}
+
+% --- Frontmatter ---
 \frontmatter 
-
 \tableofcontents
+\listoffigures
+
 \clearpage
 
-\input{capitoli/cap1_info}
-\vfill
-
+% --- Mainmatter ---
 \mainmatter
 
-\input{capitoli/cap2_perception}
-\vfill
-
-\input{capitoli/cap3_digital}
-\vfill
-
-\input{capitoli/cap4_processing}
-\vfill
-
-\input{capitoli/cap5_point}
-\vfill
-
-\input{capitoli/cap6_compression}
-\vfill
-
-\input{capitoli/cap7_local}
-\vfill
-
-\input{capitoli/cap8_fourier}
-\vfill
-
-\input{capitoli/cap9_segmentation}
-\vfill
-
-\input{capitoli/cap10_extraction}
-\vfill
-
-\input{capitoli/cap11_imagej}
-\vfill
+\include{capitoli/cap1_info}
+\include{capitoli/cap2_perception}
+\include{capitoli/cap3_digital}
+\include{capitoli/cap4_processing}
+\include{capitoli/cap5_point}
+\include{capitoli/cap6_compression}
+\include{capitoli/cap7_local}
+\include{capitoli/cap8_fourier}
+\include{capitoli/cap9_segmentation}
+\include{capitoli/cap10_extraction}
 
 \end{document}

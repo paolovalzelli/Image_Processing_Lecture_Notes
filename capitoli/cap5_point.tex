@@ -1,116 +1,120 @@
-\chapter{Point operations}
+\chapter{Point Operations}
+\label{ch:point_operations}
 
-\hrulefill
-
-\textbf{Point operations} are a class of image processing techniques that allow the user to modify how the image data fills the available range of grey levels.
-These operations are sometimes referred to as contrast enhancement, contrast stretching, and greyscale transformations.
+\textbf{Point operations} are a class of image processing techniques that allow for the modification of how image data occupies the available range of grey levels.
+These operations are sometimes referred to as contrast enhancement, contrast stretching, or greyscale transformations.
 The main applications include photometric calibration, contrast and brightness enhancement (also known as \textit{window level}), display calibration, and histogram equalisation.
+For this reason, they are often built in as an integral part of the image display software.
 
 \section{Window-level}
 
-These point operations are utilised to improve low contrast images, in which the histogram shows a narrow effective range, by using all the available grey levels.
-Brightness enhancement shifts the levels of each pixel by the same amount, without changing the shape of the histogram or the contrast, unless saturation is reached; in which case, the shape does change.
-Contrast enhancement changes the difference between grey levels by the same factor, stretching or shrinking the histogram (that is, causing some gaps or overlaps).
+These point operations are utilised to improve low-contrast images, where the histogram exhibits a narrow effective range, by making use of all available grey levels.
+Brightness enhancement shifts the levels of each pixel by a constant amount without altering the shape of the histogram or the contrast, unless saturation is reached (in which case, the shape does change).
+Contrast enhancement modifies the difference between grey levels by a constant factor, stretching or shrinking the histogram (potentially causing gaps or overlaps).
 
-\textbf{Window-level} operations are \textit{linear point operations} that relate the output grey level to the input through a linear function:
+\textbf{Window-level} operations are \textit{linear point operations} that relate the output grey level to the input via a linear function:
 
 \begin{equation}
     G' = \left( 1 + \frac{c}{K} \right) \cdot G + b
 \end{equation}
 
 \noindent where the intercept $b$ represents brightness, and the slope $c$ represents contrast.
-Since the output value must represent a possible grey level, it is necessary to define the extremes of the domain:
+Since the output value must represent a valid grey level (typically 0-255), it is necessary to define the limits of the domain:
 
 \begin{equation}
-    I' (x,y) = \begin{cases}
-        0 & if  \text{  } \text{  } \text{  } \text{  } (I(x,y) + a) \cdot b < 0 \\
-        255 & if  \text{  } \text{  } \text{  } \text{  } (I(x,y) + a) \cdot b > 0 \\
-        0 & if  \text{  } \text{  } \text{  } \text{  } else 
+    I'(x,y) = \begin{cases}
+        0 & \text{if } (I(x,y) + a) \cdot b < 0 \\
+        255 & \text{if } (I(x,y) + a) \cdot b > 255 \\
+        (I(x,y) + a) \cdot b & \text{otherwise} 
     \end{cases}
 \end{equation}
 
-If contrast is increased too much, saturation can be reached, thus causing an effective loss of contrast.
+If the contrast is increased excessively, saturation may occur, leading to an effective loss of contrast.
 
-Most softwares can automatically optimise contrast so that the output grey levels span between 0 and 255, thus avoiding saturation.
-This transformation, called \textbf{contrast stretching}, can be represented by:
+Most software can automatically optimise contrast so that the output grey levels span the range 0 to 255, thus avoiding saturation.
+This transformation, known as \textbf{contrast stretching}, can be represented by:
 
 \begin{equation}
-    I' (x,y) = (I(x,y) + a) \cdot b \text{ , where } a = - min \text{ , } b = \frac{255}{max - min}
+    I'(x,y) = (I(x,y) + a) \cdot b \quad \text{where } a = - \min, \quad b = \frac{255}{\max - \min}
 \end{equation}
 
-\noindent Since, in many cases, there are outliers in the values of the grey levels, this transformation might be of little use.
-In order to enhance the effective \textit{dynamic range} of the image in a more robust way, it is possible to select a percentage of outliers to be discarded before the contrast stretching:
+\noindent Since grey-level values often contain outliers, this transformation might prove ineffective.
+To enhance the effective \textit{dynamic range} of the image in a more robust manner, it is possible to discard a selected percentage of outliers prior to contrast stretching:
 
 \begin{equation}
-    b [m, n] = \left( 2^B - 1 \right) \cdot \frac{a [m,n] - min}{max - min} \text{ , where } b [m,n] = \begin{cases}
-        0 & a [m,n] \le p_{low}\% \\
-        \left( 2^B - 1 \right) \cdot \frac{a [m,n] - min}{p_{high}\% - p_{low}\%} & p_{low}\% < a [m,n] < p_{high}\% \\
-        \left( 2^B - 1 \right) & a [m,n] \ge p_{high}\%
+    b [m, n] = \begin{cases}
+        0 & \text{if } a [m,n] \le p_{\text{low}}\% \\
+        (2^B - 1) \cdot \dfrac{a [m,n] - \min}{p_{\text{high}}\% - p_{\text{low}}\%} & \text{if } p_{\text{low}}\% < a [m,n] < p_{\text{high}}\% \\
+        2^B - 1 & \text{if } a [m,n] \ge p_{\text{high}}\%
     \end{cases}
 \end{equation}
 
-It is possible to obtain the \textbf{negative} of an image by applying the following grey level linear point operation:
+It is possible to obtain the \textbf{negative} of an image by applying the following linear point operation:
 
 \begin{equation}
-    I'(x,y) = 255 - I (x,y)
+    I'(x,y) = 255 - I(x,y)
 \end{equation}
 
-This can be useful even if it does not change the contrast, since the way the human eye perceives contrast is not necessarily defined by the same linear relationship that is used in image processing.
+This can be useful even if it does not strictly alter the contrast, as human contrast perception is not necessarily defined by the same linear relationship used in image processing.
 
-There are also \textbf{non-linear transformation}, in which the contrast changes in different ways across the range of grey levels.
+There are also \textbf{non-linear transformations}, in which the contrast varies across the range of grey levels.
 The two most common examples are:
 
 \begin{itemize}
     \item \textbf{Square root transfer function}: 
+    
     \begin{equation}
         I'(x,y) = \sqrt{255 \cdot I(x,y)}
     \end{equation}
-    It' is utilised to increase the contrast in the darker regions and reduce it in the brighter ones, making the entire image brighter.
-    Some gaps appear in the lower end of the histogram and some overlaps in the higher end;
+    
+    This is utilised to increase contrast in darker regions and reduce it in brighter ones, effectively making the entire image brighter.
+    Gaps appear in the lower end of the histogram and overlaps in the higher end.
     \item \textbf{Square transfer function}:
+    
     \begin{equation}
         I'(x,y) = \frac{I^2(x,y)}{255}
     \end{equation}
-    It works in the same way, leading to opposite results both in brightness and contrast.
+    
+    This functions in the opposite manner, yielding opposite results in terms of brightness and contrast distribution.
 \end{itemize}
 
-For most non-linear transformations, it is possible to know the output grey level for each input value thanks to \textit{Lookup tables} (LUT).
+For most non-linear transformations, the output grey level for each input value can be retrieved using \textit{Lookup Tables} (LUT).
 
 \subsection{Display calibration}
 
-When the response function of a device is not linear, it is possible to measure it and then apply a non-linear transformation so that the overall response function becomes linear.
-One common example is given by the CRT screens, in which the response function is regulated by a relationship between output and input values defined as $O = I^\gamma$.
-A non-linear transformation obtained by the inverse of this function can make the overall response linear ($O = I^{1/\gamma}$).
-This technique is called \textit{gamma correction} and is very often $\gamma = 2.5$.
+When a device's response function is non-linear, it is possible to measure it and subsequently apply a non-linear transformation to linearise the overall response.
+A common example is found in CRT screens, where the response function is governed by the relationship $O = I^\gamma$.
+A non-linear transformation using the inverse of this function makes the overall response linear ($O = I^{1/\gamma}$).
+This technique is called \textit{gamma correction}, typically with $\gamma = 2.5$.
 
-\subsection{Histogram equalization}
+\subsection{Histogram equalisation}
 
-An important application of non-linear transformation is called \textbf{histogram equalization}.
-This operation changes the grey level of the pixels with the aim of obtaining the best approximation of a flat histogram, in which every grey level is fully utilised by roughly the same number of pixels.
-This increases contrast in the most populated parts of the histogram and reduces it in the least populated ones; however, it also adds noise, especially in the most uniform regions of the image.
-Since it is not possible to distinguish between different pixels with the same initial grey level, this operation can only change the brightness of every pixel with the same initial value to the same final value.
-Some gaps and overlaps are due to the fact that the number of pixels and grey levels is not infinite.
-The overall contrast increases for the vast majority of pixels, but it can decrease the quality of the image if the objective is to highlight smaller details where the contrast is low.
+An important application of non-linear transformation is \textbf{histogram equalisation}.
+This operation modifies pixel grey levels to approximate a flat histogram, where every grey level is utilised by roughly the same number of pixels.
+This increases contrast in the most populated regions of the histogram and reduces it in the least populated ones; however, it also amplifies noise, particularly in uniform regions of the image.
+Since distinguishing between different pixels with the same initial grey level is impossible, this operation can only map all pixels with the same initial value to the same final value.
+Gaps and overlaps occur because the number of pixels and grey levels is finite.
+While the overall contrast increases for the majority of pixels, image quality may decrease if the objective is to highlight small details in low-contrast areas.
 
-\begin{figure}
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\linewidth]{immagini/histogram_equalization.png}
-    \caption{Histogram equalization.}
+    \caption{Histogram equalisation.}
     \label{fig:histogram_equalization}
 \end{figure}
 
-\section{Arithmetic operations}
+\section{Arithmetic Operations}
 
-Standard \textbf{arithmetic operations} can be carried out between corresponding points in two images that have the same number of pixels.
-When two images are aligned, a subtraction between them can highlight the differences, while multiplication or division can help identify the gain of each single cell of the acquisition device, thereby making device calibration possible.
+Standard \textbf{arithmetic operations} can be performed between corresponding points in two images possessing the same number of pixels.
+When two images are registered (aligned), subtraction can highlight differences, while multiplication or division can aid in identifying the gain of individual sensor cells, thereby facilitating device calibration.
 
 \subsection{Noise reduction by image averaging}
 
-Considering statistical noise and assuming it can be represented as an additive Gaussian with a mean equal to zero, it is possible to reduce the noise by taking the average of different images of the same scene.
-Short acquisition times lead to higher statistical noise, but in some cases, longer exposures can cause saturation; therefore, there is a loss of information.
-A large number of images with a short acquisition time can be useful for increasing the statistics without losing information due to saturation.
+Considering statistical noise and assuming it can be modelled as an additive Gaussian distribution with zero mean, noise reduction can be achieved by averaging different images of the same scene.
+Short acquisition times result in higher statistical noise; conversely, longer exposures may cause saturation, leading to information loss.
+A large number of images acquired with short exposure times can be useful for increasing statistics without losing information due to saturation.
 
-The single acquired image can be represented as the sum of the original noiseless component of the image and the statistical noise:
+A single acquired image can be represented as the sum of the original noiseless component and the statistical noise:
 
 \begin{equation}
     g_i(x,y) = f(x,y) + n(x,y)
@@ -121,7 +125,8 @@ The average of $M$ acquired images is:
 \begin{equation}
     \bar{g}(x,y) = \frac{1}{M} \sum_{i=1}^M g_i(x,y)
 \end{equation}
-Due to the Gaussian nature of statistical noise, the expected value of the final image will be:
+
+Due to the Gaussian nature of statistical noise, the expected value of the final image is:
 
 \begin{equation}
     \mathbb{E} \{\bar{g}(x,y)\} = f(x,y)
@@ -133,13 +138,14 @@ The variance of the final image is reduced by a factor equal to the number of im
     \sigma^2_{\bar{g}(x,y)} = \frac{1}{M} \cdot \sigma^2_{n(x,y)} \Longrightarrow \sigma_{\bar{g}(x,y)} = \frac{1}{\sqrt{M}} \cdot \sigma_{n(x,y)}
 \end{equation}
 
-This technique is very powerful in removing statistical noise, but it cannot reduce other sources of noise, for example defects in the acquisition device.
+This technique is highly effective in removing statistical noise, but it cannot reduce other sources of noise, such as defects in the acquisition device.
 
-\section{Logical operations}
+\section{Logical Operations}
 
-It is possible to apply \textbf{logical operations} on one or more binary images, for example, to mask some regions.
+\textbf{Logical operations} can be applied to one or more binary images, for instance, to mask specific regions.
+They are often used in combination with morphological operations.
 
-\begin{figure}
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\linewidth]{immagini/logical_operations.png}
     \caption{Some common logical operations.}

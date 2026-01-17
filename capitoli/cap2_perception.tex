@@ -1,0 +1,250 @@
+\chapter{Images and visual perception}
+
+\hrulefill
+
+\section{Images in physics}
+
+Images are a type of data with many applications in physics, such as computer vision, medical techniques, cultural heritage, and satellite image processing.
+Nowadays, images are always in digital format.
+
+An image is a measure of the intensity of the radiation that is emitted from a source and later reflected by or transmitted through the observed subject.
+
+\section{Radiometry}
+
+Radiometry measures radiation and its interaction with matter.
+The source of radiation is often described by a spectrum of different wavelengths, but in some cases, there can also be monochromatic sources.
+The amount of energy carried by radiation is called \textbf{radiant energy} (E), while the power of radiation, that is, the energy per unit time, is called \textbf{radiant flux} (Q).
+
+\subsection{Radiometric quantities}
+
+Usually, \textbf{irradiance} (E) indicates the \textit{received} amount of radiant flux per unit area, while \textbf{radiant exitance} (L) indicates the \textit{emitted} amount of radiant flux per unit area.
+Therefore, the former is associated with the image and the latter with the object.
+
+\begin{table}[htb]
+    \centering
+    \begin{tabular}{||c|c|c||}
+    \hline
+    \textbf{Quantity} & \textbf{Definition} & \textbf{Unit} \\
+    \hline
+    Irradiance & $dQ/dA$ & $\left[ W/m2 \right]$ \\
+    \hline
+    Radiant exitance & $dQ/dA$ & $\left[ W/m2 \right]$ \\
+    \hline
+    Radiant intensity & $dQ/d\omega$ & $\left[ W/sterad \right]$ \\
+    \hline
+    Radiance & $dQ/d\omega dA$ & $\left[ W/sterad \cdot m^2 \right]$ \\
+    \hline
+    \end{tabular}
+    \caption{Radiometric quantities.}
+    \label{tab:radiometric_quantities}
+\end{table}
+
+The technique that combines different images of the same object, obtained by exploring different parts of the electromagnetic spectrum, to provide complementary information, is called \textbf{multispectral imaging}.
+
+\subsection{Photometry}
+
+Photometry is the field of radiometry that only studies visible light.
+Photometric quantities resemble radiometric quantities, but have distinct, more specific names.
+The fundamental unit of \textbf{luminous intensity} is the \textit{candela} (cd), while the unit for the \textbf{luminous flux} (F) is the \textit{lumen}.
+
+\begin{table}[htb]
+    \centering
+    \begin{tabular}{||c|c|c||}
+    \hline
+    \textbf{Quantity} & \textbf{Definition} & \textbf{Unit} \\
+    \hline
+    Illuminance & $dF/dA$ & $\left[ lumen/m^2 = lux\right]$ \\
+    \hline
+    Luminous exitance (emittance) & $dF/dA$ & $\left[ lumen/m^2 = lux\right]$ \\
+    \hline
+    Intensity & $dF/d\omega$ & $\left[ lumen/sterad = candela\right]$ \\
+    \hline
+    Luminance & $dF/d\omega dA$ & $\left[ lumen/sterad \cdot m^2 \right]$ \\
+    \hline
+    \end{tabular}
+    \caption{Photometric quantities.}
+    \label{tab:radiometric_quantities}
+\end{table}
+
+\section{Human eye response}
+
+The human eye can be considered an acquisition system that provides an image.
+It is necessary to define a \textbf{luminosity function} (that is a response function) that measures the output (that is, the image, or the measure of the intensity of the radiation) as a function of the input (the actual intensity).
+This can be considered a spectral sensitivity: the efficiency of the eye for a range of wavelengths.
+
+There are two distinct luminosity functions:
+
+\begin{itemize}
+    \item \textbf{photopic vision}, for everyday light;
+    \item \textbf{scotopic vision}, for low light level.
+\end{itemize}
+
+In both cases, the efficiency is not maximum at every wavelength but shows a peak (which is typical in a real device).
+Scotopic vision shows a higher maximum efficiency and is shifted towards shorter wavelengths (blue).
+
+\subsection{Intensity of a source}
+
+The intensity of a light source ($L$) characterized by a spectral power distribution ($P(\lambda)$) depends on the spectral sensitivity of the human eye ($V(\lambda)$):
+
+\begin{equation}
+    L = \int_0^\infty P(\lambda) \cdot V(\lambda) d \lambda
+\end{equation}
+
+\subsection{Anatomy of the human eye}
+
+A lens makes the light converge to (almost) a single point on the light sensitive layer, called the retina, that converts the incoming radiation to an electric signal that is sent to the brain by the optical nerve.
+A diaphragm called the iris regulates the amount of light that reaches the acquisition device.
+
+\subsection{Cones and rods}
+
+There are two types of photoreceptors inside the retina: \textbf{rods} and \textbf{cones}.
+
+\begin{table}[htb]
+    \centering
+    \begin{tabular}{||c|c||}
+    \hline
+    \textbf{Rods} & \textbf{Cones} \\
+    \hline
+    High sensitivity & Low sensitivity \\
+    \hline
+    Low light & High light ($> 1 cd/m^2$) \\
+    \hline
+    Monochromatic & Colour \\
+    \hline
+    Scotopic vision & Photopic vision \\
+    \hline
+    \end{tabular}
+    \caption{Caption}
+    \label{tab:rods_cones}
+\end{table}
+
+The highest concentration of cones occurs in the fovea, while the concentration of rods peaks further away, making the peripheral vision more sensitive in low light conditions.
+A blind spot appears due to the presence of the optic nerve.
+
+Rods and cones have different spectral sensitivities.
+There are three kinds of cones, characterized by three different spectral sensitivities peaked around the colours red, green, and blue.
+
+\section{Colour vision and representation}
+
+In the \textbf{Young model} (1820) every colour can be described as a combination of three primary colours, so that, providing one monochromatic wave to the eye, a triplet of values, that correspond to the efficiencies of the three kinds of cones, could be used to decode and represent it.
+Each monochromatic wave is mapped into a triplet of signals that the human brain perceives as a distinct colour.
+
+A \textbf{colour space} is a model describing the way colours can be represented as tuples of numbers, typically as three values.
+The most common colour space is \textbf{RGB}, a quantitative formulation of the \textit{Additive law} (also known as \textit{Tristimulus theory}).
+
+In the \textit{Colour matching experiment}, an observer compares a screen on which a desired colour is projected and one where there is a combination of red, green, and blue light, adjusting the quantities so that they match.
+This is one way to manually map every possible colour.
+
+A colour $C$ can be reproduced as a combination of the three primary colours:
+
+\begin{equation}
+    C \equiv a_R (C) \cdot R + a_G (C) \cdot G + a_B (C) \cdot B
+\end{equation}
+
+where the coefficients $a$ represent the fraction of the primary colours.
+
+The \textit{additive property} states that if a colour can be achieved as the sum of two other colours, it is:
+
+\begin{equation}
+    C_3 \equiv C_1 + C_2  \equiv [a_R (C_1) + a_R (C_2) ] \cdot R + [a_G (C_1) + a_G (C_2) ] \cdot G + [a_B (C_1) + a_B (C_2) ] \cdot B
+\end{equation}
+
+The colour matching functions sometimes require a negative value for some spectral colours in the blue-green region ($C_{vb}$), so they cannot be described by the tristimulus theory.
+These colours can be matched by adding one of the primaries to the colour itself:
+
+\begin{equation}
+    C + a_R (C) \cdot R \equiv a_G (C) \cdot G + a_B (C) \cdot B \text{ } \Longrightarrow \text{ } C \equiv -a_R (C) \cdot R + a_G (C) \cdot G + a_B (C) \cdot B
+\end{equation}
+
+\subsection{RGB and CIE}
+
+In the RGB (3D) space, each colour can be represented as a vector whose components make up the intensities of the three primaries.
+This space can be visualized as a cube whose vertices represent the colours:
+
+\begin{itemize}
+    \item White (0,0,0);
+    \item Red (1,0,0), primary;
+    \item Green (0,1,0), primary;
+    \item Blue (0,0,1), primary;
+    \item Yellow (1,1,0), antiprimary;
+    \item Cyan (0,1,1), antiprimary;
+    \item Magenta (1,0,1), antiprimary;
+    \item Black (1,1,1).
+\end{itemize}
+
+In the \textbf{CIE} (Commission Internationale d'Eclairage) the chromaticity of a colour is represented with three parameters (\textit{fractional} primaries):
+
+\begin{equation}
+    x = \frac{R}{R + G + B}; y = \frac{G}{R + G + B}; z = \frac{B}{R + G + B} \text{ } ; \text{ } x +y +z = 1
+\end{equation}
+
+For a given luminance, the chromaticity of a colour can be specified by the two parameters $x$ and $y$.
+This system can represent even the colours that cannot be described by the RGB space.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\linewidth]{immagini/CIE.png}
+    \caption{CIE colour space.}
+    \label{fig:CIE}
+\end{figure}
+
+The formulas for converting the CIE coordinates to the RGB systems are given by:
+
+\begin{equation}
+    R = \int_0^\infty P(\lambda) \cdot X(\lambda) d \lambda \text{ } ; \text{ } 
+    G = \int_0^\infty P(\lambda) \cdot Y(\lambda) d \lambda \text{ } ; \text{ } 
+    B = \int_0^\infty P(\lambda) \cdot Z(\lambda) d \lambda
+\end{equation}
+
+where $P(\lambda)$ is the spectral distribution of the light to be represented, and $X,Y,Z$ are the CIE primaries.
+
+\subsection{HSV}
+
+The \textbf{HSV} (Hue, Saturation, Value or Intensity or Lightness) colour space  can be represented as a hexagonal pyramid that describes colours in a way that is more similar to an artist's approach.
+The hue represents the colour as an angle, so that in the corners there are red, yellow, green, cyan, blue and magenta.
+Saturation increases further away from the centre, where white is located, and value increases going up, towards the base, so that in the vertex there is black.
+
+\subsection{CMY}
+
+The \textbf{CMY} (Cyan, Magenta, Yellow) space is based on a subtractive model, which is useful for colour printing.
+The coordinates of a point in this space are complementary to those of the corresponding point in the RGB space:
+
+\begin{equation}
+\begin{pmatrix}
+    C \\
+    M \\
+    Y
+\end{pmatrix}
+=
+\begin{pmatrix}
+    1 \\
+    1 \\
+    1
+\end{pmatrix}
+-
+\begin{pmatrix}
+    R \\
+    G \\
+    B
+\end{pmatrix}
+\end{equation}
+
+\section{Human visual system}
+
+From the scotopic threshold to the glare limit, the range of light intensity covers approximately ten orders of magnitude.
+The subjective brightness is a logarithmic function of the light intensity and the visual system changes its overall sensitivity through \textit{brightness adaptation}, that requires some time, so that it cannot operate simultaneously over the entire range.
+
+\subsection{Mach band effect}
+
+\textbf{Contrast} is the difference in brightness between two regions in an image.
+The human eye tends to increase the local, perceived contrast if there are step edges in brightness, so that a uniform colour band is perceived as not uniform.
+
+\subsection{Simultaneous contrast}
+
+the perceived brightness of a region also depends on the background intensity, so that equally bright regions might appear darker or lighter due to the surrounding background.
+Phantom spots are another example of the contrast that the human eye adds to an image.
+
+\subsection{Daltonism}
+
+If a kind of the cones is affected by a problem, some colours cannot be distinguished by the human eye.
+This condition is a genetic disease that predominantly occurs in men.

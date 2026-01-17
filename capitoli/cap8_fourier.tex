@@ -1,0 +1,207 @@
+\chapter{Fourier in image processing}
+
+\hrulefill
+
+\section{Fourier transform}
+
+\subsection{Spatial and frequency domains}
+
+An important image processing tool is the \textbf{Fourier transform}, which is used to decompose an image into its sine and cosine components, allowing for image filtering, reconstruction, and compression.
+The output of the transformation is the \textbf{Fourier spectrum} of the image in the \textit{frequency domain}, in which each point represents the amplitude of the signal at that specific frequency.
+Regular signals in the \textbf{spatial domain} produce a distinct signal in the frequency domain, corresponding to the spacing.
+Each term of the series in the frequency domain represents the importance of that spatial frequency for the image.
+
+The most common operations allowed by the Fourier transform in image processing are:
+
+\begin{itemize}
+    \item \textbf{Fourier analysis}: a signal is decomposed into its constituent sinusoids with different frequencies;
+    \item \textbf{Fourier synthesis}: starting from simple oscillating signals, it is possible to combine them to generate complex 2-dimensional distributions of grey levels;
+    \item \textbf{Fourier spectrum}: it is possible to obtain a distribution of amplitudes for the various frequencies that compose a complex signal.
+\end{itemize}
+
+\subsection{Image decomposition}
+
+A 2-dimensional distribution of grey levels can be decomposed in a (possibly infinite) set of sine functions with different amplitudes and frequencies.
+
+A sine wave consists of a single frequency, so that its spectrum is a single point.
+A periodic wave can be decomposed into a sum of sine waves, whereas a square wave needs an infinite number of sine waves to be represented.
+White noise is characterised by a white spectrum; that is, a spectrum in which every frequency has equal intensity in the signal.
+
+\section{Fourier transform}
+
+The output of the \textbf{Fourier transform} is a complex number that can be displayed as a pair of images representing either real and imaginary part, or magnitude and phase.
+usually, the latter is preferred in image processing, since the main focus is often the magnitude of each specific frequency.
+
+\subsection{Direct and inverse transform}
+
+The \textbf{direct transform} and the \textbf{inverse transform} of a 1-dimensional continuous function are defined by:
+
+\begin{align}
+    F(u) = & \int_{-infty}^{+\infty} f(x) e^{-2i\pi ux} dx \\
+    f(x) = & \int_{-infty}^{+\infty} F(u) e^{2i\pi ux} du
+\end{align}
+
+For 2-dimensional signals, such as images, the definitions become:
+
+\begin{align}
+    F(u,v) = & F [f(x,y)] = \int_{-\infty}^{+\infty} \int_{-\infty}^{+\infty}f(x,y) e^{-2i\pi (ux + vy)} dxdy \\
+    f(x,y) = & F^{-1} [F(u,v)] = \int_{-\infty}^{+\infty} \int_{-\infty}^{+\infty}F(u,v) e^{2i\pi (ux + vy)} dudv
+\end{align}
+
+\subsection{Discrete Fourier transform}
+
+The \textbf{Discrete Fourier transform} (DFT) is utilised for images, since they are discrete distributions of values in a 2D space.
+The number of frequencies forming the spectrum of an image is limited by the number of pixels in the original image in the spatial domain:
+
+\begin{align}
+    F(u) = & \frac{1}{M} \sum_{x = 0}^{M - 1} f(x) e^{-2i\pi u \frac{x}{M}} \text{ , for } u = 0,1,...,M \\
+    f(x) = & \frac{1}{M} \sum_{x = 0}^{M - 1}F(u) e^{2i\pi u \frac{x}{M}} \text{ , for } x = 0,1,...,M
+\end{align}
+
+The sampling step in the frequency domain is given by the pixel size in the spatial domain: $\Delta u = (M \Delta x)^{-1}$.
+
+By utilising the Euler formula, the complex exponential functions can be replaced by trigonometric functions:
+
+\begin{equation}
+    F(u) = \frac{1}{M} \sum_{x = 0}^{M - 1} f(x) \left[ \frac{cos (2\pi ux) - i\cdot sin(2\pi ux)}{M} \right] \text{ , for } u = 0,1,...,M
+\end{equation}
+
+The DFTs in 2 dimensions are defined as:
+
+\begin{align}
+    F(u) = & \frac{1}{M \cdot N} \sum_{x = 0}^{M - 1} \sum_{y = 0}^{N - 1} f(x,y) e^{-2i\pi \left( u \frac{x}{M} + v \frac{y}{N} \right)} \\
+    f(x) = & \frac{1}{M \cdot N} \sum_{x = 0}^{M - 1} \sum_{y = 0}^{N - 1} F(u,v) e^{2i\pi \left( u \frac{x}{M} + v \frac{y}{N} \right)}
+\end{align}
+
+The Fourier transform in the origin $(u,v) = (0,0)$, referred to as the \textit{DC component}, is equal to the average of the grey levels of the image:
+
+\begin{equation}
+    F(0,0) = \frac{1}{M \cdot N} \sum_{x = 0}^{M - 1} \sum_{y = 0}^{N - 1} f(x,y)
+\end{equation}
+
+The name suggests that this value does not undergo oscillations.
+
+\subsection{Fourier spectrum}
+
+The DC component is shifted to the centre of the frequency spectrum and is by far the largest component of the spectrum; therefore, to correctly display it, the logarithm is shown to compress the range of values. 
+Another solution is to exclude the central pixel from the spectrum.
+The \textbf{Fourier spectrum} is a digital image in which every pixel shows the magnitude associated with that frequency.
+
+By only looking at the magnitude the information about the spatial position of the objects is lost.
+It is possible to associate the frequencies showcased in the spectrum with pattern sof intensity variations in an image:
+
+\begin{itemize}
+    \item low frequencies correspond to the slowly varying components of an image;
+    \item high frequencies correspond to sharp changes in the image; that is, edges and noise.
+\end{itemize}
+
+Notably, in images with a defined geometry, some structures can be highlighted in the spectrum.
+
+\section{Fourier transform properties}
+
+The Fourier transforms of 2D signals are characterised by:
+
+\begin{itemize}
+    \item \textbf{Symmetry}: $|F\{u,v\}| = |F\{-u, -v\}|$;
+    \item \textbf{Distributivity}: the Fourier transform is distributive over addition but not over multiplication:
+    \begin{align}
+        F \{f_1 (x,y) + f_2 (x,y) \} & = F \{f_1 (x,y) \} + F \{ f_2 (x,y) \} \\
+        F \{f_1 (x,y) \cdot f_2 (x,y) \} & \ne F \{f_1 (x,y) \} \cdot F \{ f_2 (x,y) \}
+    \end{align}
+    \item \textbf{Rotation}: a rotation of the image results in an equivalent rotation of its Fourier transform:
+    \begin{equation}
+        f(r, \theta + \theta_0) \Longleftrightarrow F(\omega, \phi + \theta_0)
+    \end{equation}
+    \item \textbf{Scaling}: scaling in the spatial domain determines a scaling of the Fourier transform:
+    \begin{equation}
+        f(x,y) \longrightarrow f(M_x \cdot x, M_y \cdot y) \Longrightarrow F\{u,v\} \longrightarrow \frac{F \{ \frac{u}{M_x}, \frac{v}{M_y}}{| M_x \cdot M_y |}
+    \end{equation}
+\end{itemize}
+
+\subsection{Distributivity}
+
+Thanks to the property of \textbf{distributivity}, it is possible to highlight some components of the spectrum and remove other unwanted features, so that the inverse transform can later filter them out.
+Some frequencies can be filtered out, allowing for a different strategy to achieve noise reduction when it is not possible in the spatial domain.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{immagini/distributivity.png}
+    \caption{Example of application of the distributivity property of Fourier transforms.}
+    \label{fig:placeholder}
+\end{figure}
+
+\section{Convolution theorem}
+
+The \textbf{convolution theorem} expresses the relationship between the spatial and frequency domains: the convolution in the spatial domain between an image and a kernel is equivalent to the multiplication in the frequency domain between the spectrum and a filter obtained as the Fourier transform of the kernel.
+
+\begin{equation}
+    f(x,y) \ast h(x,y) \Longleftrightarrow F(u,v) \cdot H(u,v)
+\end{equation}
+
+This theorem allows for exploiting the distributivity property of the Fourier transform, as it is possible to take the multiplication in the frequency domain between the spectrum and a binary mask to effectively filter out the unwanted frequencies.
+The computational cost of this operation is that of a multiplication; that is, one calculation for each pixel, as opposed to $M^2$ for the convolution in the spatial domain.
+This does not take into account the cost of calculating both direct and inverse transforms.
+The main advantage offered by the theorem is the wider variety of operations that can be carried out in the frequency domain.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{immagini/convolution_theorem.png}
+    \caption{Convolution theorem visualised.}
+    \label{fig:convolution_theorem}
+\end{figure}
+
+\section{Frequency filters}
+
+Applying a \textbf{low-pass filter} to the spectrum of an image and later taking the inverse transform can cut high frequencies, achieving a smoothing effect that blurs the edges and reduces noise.
+On the contrary, by applying the same strategy with a \textbf{high-pass filter}, it is possible to highlight the edges and lose information about uniform regions in the image, obtaining a result that is similar to edge detection in the spatial domain.
+It is possible to cut out both high and low frequencies, by applying a \textbf{band-pass filter}.
+
+This similarity with local operations is the reason why they are often referred to as \textit{filters}.
+
+\subsection{Performance in image filtering}
+
+It is possible to carry out a linear spatial filtering operation both in the spatial domain, by applying a convolution with a spatial operator, and in the frequency domain, by multiplying together the Fourier transform of image and filter and then computing the inverse transform.
+The filter may be simpler to specify or compute in one of the two domains.
+The Fourier transform allows to isolate a particular range of frequencies and to perform filtering with a great degree of precision.
+
+Noise reduction can be achieved by manually building the appropriate filter to be applied on the Fourier transform of the image.
+
+\subsection{Ideal filters}
+
+The shape of these filters is characterised by a sharp transition between 1 and 0 at a specific \textit{cutoff frequency} $D_0$.
+
+For example, an ideal low-pass filter is described by:
+
+\begin{equation}
+    H(u,v) = \begin{cases}
+        1, & \text{ if } D(u,v) \le D_0 \\ 0, & \text{ if } D(u,v) > D_0
+    \end{cases} \qquad D(u,v) = \sqrt{\left( u - \dfrac{M}{2} \right)^2 + \left( v - \dfrac{N}{2} \right)^2}  
+\end{equation}
+
+The main limitation of the ideal filters is the artifacts that are created on the processed images, for example the typical \textit{ringing effect}; this is why they are utilised only in rare occasions.
+
+\subsection{Common filters}
+
+Compared to the ideal ones, \textbf{common filters} have a smoother transition between 1 and 0.
+In fig. ~\ref{fig:common_filters}, some of the most common high-pass filters are presented.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{immagini/common_filters.png}
+    \caption{Shape of some of the most common filters.}
+    \label{fig:common_filters}
+\end{figure}
+
+The most common low-pass filter, that is, the \textbf{Butterworth low pass filter}, has a shape which is close to that of a gaussian distribution.
+It is used to avoid the ringing effect.
+
+If the background noise has a well defined structure, especially if it is a periodic signal, it is possible to greatly reduce it by cutting out the specific frequencies, whereas it would be impossible to achieve similar results in the spatial domain.
+
+In fig. ~\ref{fig:moon}, a clear example of the reduction of a well structured noise by a properly crafted filter is presented.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{immagini/common_filters.png}
+    \caption{Noise reduction from a lunar orbital image recorded in 1966.}
+    \label{fig:moon}
+\end{figure}

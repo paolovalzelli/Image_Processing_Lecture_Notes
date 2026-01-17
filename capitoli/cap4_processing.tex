@@ -1,0 +1,334 @@
+\chapter{Digital image processing}
+
+\hrulefill
+
+The \textbf{digital image chain} comprises an acquisition device, an input and output storage, a computer to process, and a device to visualize the digital image.
+\textbf{Digital image processing} is the use of computer algorithms to perform image processing on digital images.
+The two main advantages over analogue image processing are the wider range of algorithms and the repeatability of the processes.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        every node/.style={
+            draw,
+            rounded corners,
+            align=center,
+            minimum width=3.5cm,
+            minimum height=1cm,
+            font=\small
+        },
+        ->, >=Stealth,
+        flowlabel/.style={
+            midway,
+            above,
+            sloped,
+            font=\footnotesize,
+            text=gray
+        }
+    ]
+
+    \node (a) at (0,0) {Image acquisition};
+    \node (b) at (2,-2) {Preprocessing, \\ enhancement};
+    \node (c) at (4,-4) {Segmentation};
+    \node (d) at (6,-6) {Representation, \\ description, \\ feature extraction};
+    \node (e) at (8,-8) {Classification, \\ interpretation, \\ recognition};
+    \node (f) at (10,-10) {Result};
+
+    \draw (a) -- (b);
+    \draw (b) -- (c);
+    \draw (c) -- (d);
+    \draw (d) -- (e);
+    \draw (e) -- (f);
+
+    \end{tikzpicture}
+
+    \caption{Fundamental steps in image analysis.}
+    \label{fig:steps}
+\end{figure}
+
+\section{Image acquisition}
+
+The acquisition device is a detector made of millions of photosensitive sites, where radiation is converted into an electrical charge according to the intensity, then is converted to a digital number.
+
+\subsection{Scintillation devices and semiconductor detectors}
+
+A \textbf{scintillator} is a material that emits visible light when excited by incoming radiation.
+It can be coupled to an electronic light sensor to obtain a scintillation detector, that first converts incoming ionizing radiation into visible light and later converts it into an electric charge, achieving \textit{indirect conversion}.
+
+In a \textbf{semiconductor detector} or solid state detector, a sensitive layer made from a semiconductor produces charges (electrons and holes) when excited by incoming radiation.
+These charges are collected with an electric field, achieving direct conversion.
+
+The light produced by the Compton effect or photoelectric effect inside a scintillator is emitted in all directions, thus creating a cone of photons that produce a spot for every interaction, creating a blurry image.
+The width of the cone can be reduced with a thinner layer, but this also reduces its efficiency.
+It is possible to use a structure of thin ($ \approx 20 \mu m$) needle-shaped columns of scintillator to reduce the spread without compromising excessively the efficiency of the detector.
+In solid state detectors, the spread is greatly reduced thanks to the direct conversion, and the images tend to be of better quality.
+
+\section{Digitizer characteristics}
+
+\begin{itemize}
+    \item \textbf{Pixel size} affects the spatial resolution.
+    It has physical limits due to the presence of the electronics and can be costly to improve.
+    \item \textbf{Image size} affects the FOV.
+    While a larger image is usually better, the size can be hampered by higher costs of the digitizer.
+    \item \textbf{Linearity} of the response function of the device is preferable, but in some cases the relationship between input $I$ and output $O$ needs to be corrected by a calibration curve:
+    \begin{equation}
+        O = gain \cdot I^\gamma + offset
+    \end{equation}
+    \item \textbf{Noise} is introduced by the detector itself.
+    While statistical noise doesn't depend strongly on the kind of detector, electronic noise introduced by the digitizer is a source of image degradation.
+\end{itemize}
+
+\textbf{Flat panel detectors} (FPD) are very compact acquisition devices that use different kinds of sensitive layers, with both direct and indirect conversion, and then treat the electric charges in the same way.
+Most photodiodes are composed of a matrix of \textbf{thin film transistors} (TFTs): in each cell, there is a transistor that switches, enabling the signal to be collected and sent, and a capacitor that collects the charges.
+
+\section{Image visualization}
+
+A display system recreates an image as a distribution of visible light given by the numbers of the digital image.
+The conversion determines some distortions that should ideally be minimized.
+While a monitor displays a temporary image, called \textit{soft-copy}, in some cases it is required to produce a permanent, printed image, called \textit{hard-copy}.
+
+\subsection{Visualization devices}
+
+The main features of a visualization device are:
+
+\begin{itemize}
+    \item \textbf{Displayed image size}: the capability of a system to correctly display large images.
+    It should ideally be large enough to be convenient, but a large display could have a non sufficient number of pixels;
+    \item \textbf{Photometric resolution}: the accuracy in the displayed intensity at each pixel position.
+    It depends on the number of discrete grey levels that the system can produce and on the electronic noise causing fluctuations around the correct value.
+    If the fluctuations are larger than the difference between grey levels, the effective number of grey levels is reduced;
+    \item \textbf{Response curve}: the transfer curve of input grey level to output brightness.
+    Ideally, this should be linear and constant in time, but slight deviations are hard to notice for the human eye;
+    \item \textbf{Calibration of the display}: the procedure of measuring the response of the device and changing some of its parameters to properly render the displayed images.
+    A phantom image is provided to the monitor in order to test its response;
+    \item \textbf{Luminance}: the measure of the brightness of the display.
+    It is very often desirable to have bright monitors, especially in medical tasks, to properly distinguish between the many shades of grey;
+    \item \textbf{Monitor reliability}: the stability in time of the characteristics of the device.
+    A periodic calibration is needed to assess the reliability of the device and to correct the variations of the transfer function.
+\end{itemize}
+
+\section{Image formats}
+
+\subsection{Raster and vector type}
+
+Raster format files describe images as a matrix of numbers corresponding to the grey levels of the corresponding pixels.
+Some common examples are \texttt{jpeg}, \texttt{gif}, \texttt{tiff}, \texttt{raw}, \texttt{bmp}, \texttt{DICOM}.
+
+Vector format files describe shapes in an analytical, mathematically defined way.
+This could save a lot of space in images where many pixels are identical, such as in texts.
+Some common examples are \texttt{ps}, \texttt{eps}, \texttt{pdf}.
+
+\subsection{Header}
+
+Different formats contain distinct information before the actual image data, in what is known as a \textbf{header}.
+In the case of \texttt{raw} format files, there is no header and the file appears as a matrix, but, in other formats, some common pieces of information are the number of pixels, the number of grey levels, or the date of the acquisition.
+
+\section{Geometric operations}
+
+\textbf{Geometric transformations} change the shape of the pixels or their position, without (ideally) changing their grey level.
+They consist of two basic steps:
+
+\begin{itemize}
+    \item the mapping of the coordinates of each pixel in the transformed image;
+    \item an interpolation policy to determine the brightness of the pixels in the transformed image.
+\end{itemize}
+
+\subsection{Spatial transformation}
+
+The generic spatial transformation can be expressed as the relationship between the original image $f_o$ and the transformed one $f_t$, described by the functions $t_1$ and $t_2$:
+
+\begin{equation}
+    f_t (x', y') = f_0 (x,y) \text{ ; where } x' = t_1 (x,y) , y' = t_2(x,y)
+\end{equation}
+
+It describes how pixels are rearranged in the spatially transformed image.
+The most common are the \textbf{Affine transformations} (rigid body transformations), that can be applied to the image vector thanks to a matrix multiplication.
+
+The generic affine transformation is given by:
+
+\begin{equation}
+    \begin{bmatrix}
+        x' \\
+        y' \\ 
+        1
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        a_{00} & a_{01} & a_{02} \\
+        a_{10} & a_{11} & a_{12} \\
+        a_{20} & a_{21} & a_{22}
+    \end{bmatrix}
+    \cdot
+    \begin{bmatrix}
+        x \\
+        y \\ 
+        1
+    \end{bmatrix}
+\end{equation}
+
+The most common spatial transformations are:
+
+\begin{itemize}
+    \item \textbf{Translation}, that changes the image position:
+    \begin{equation}
+    \begin{bmatrix}
+        x' \\
+        y' \\ 
+        1
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        1 & 0 & \Delta x \\
+        0 & 1 & \Delta y \\
+        0 & 0 & 1
+    \end{bmatrix}
+    \cdot
+    \begin{bmatrix}
+        x \\
+        y \\ 
+        1
+    \end{bmatrix}
+\end{equation}
+
+    \item \textbf{Scaling}, that changes the size of an image:
+    \begin{equation}
+    \begin{bmatrix}
+        x' \\
+        y' \\ 
+        1
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        s_x & 0 & 0 \\
+        0 & s_y & 0 \\
+        0 & 0 & 1
+    \end{bmatrix}
+    \cdot
+    \begin{bmatrix}
+        x \\
+        y \\ 
+        1
+    \end{bmatrix}
+\end{equation}
+
+    \item \textbf{Rotation}, that changes the orientation of the image:
+    \begin{equation}
+    \begin{bmatrix}
+        x' \\
+        y' \\ 
+        1
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        cos \theta & - sin \theta & 0 \\
+        sin \theta & cos \theta & 0 \\
+        0 & 0 & 1
+    \end{bmatrix}
+    \cdot
+    \begin{bmatrix}
+        x \\
+        y \\ 
+        1
+    \end{bmatrix}
+\end{equation}
+
+    \item \textbf{Reflection with respect to the x axis}, that flips the image along the x axis:
+    \begin{equation}
+    \begin{bmatrix}
+        x' \\
+        y' \\ 
+        1
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        -1 & 0 & 0 \\
+        0 & 1 & 0 \\
+        0 & 0 & 1
+    \end{bmatrix}
+    \cdot
+    \begin{bmatrix}
+        x \\
+        y \\ 
+        1
+    \end{bmatrix}
+\end{equation}
+
+    \item \textbf{Reflection with respect to the y axis}, that flips the image along the y axis:
+    \begin{equation}
+    \begin{bmatrix}
+        x' \\
+        y' \\ 
+        1
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        1 & 0 & 0 \\
+        0 & -1 & 0 \\
+        0 & 0 & 1
+    \end{bmatrix}
+    \cdot
+    \begin{bmatrix}
+        x \\
+        y \\ 
+        1
+    \end{bmatrix}
+\end{equation}
+\end{itemize}
+
+\subsection{Grey level interpolation}
+
+Since pixel positions are discrete, a spatial transformation might not bring it to a grid point, so that there is a need to interpolate the pixels to which the initial grey level should be assigned.
+The two most common interpolation methods are:
+
+\begin{itemize}
+    \item \textbf{Nearest neighbour}: the brightness of the initial pixel is assigned to the closest grid point, without interpolation.
+    This method tends to change the shape of the edges in the processed image, so that in some cases smoothing is applied;
+    \item \textbf{(bi)linear interpolation}: the initial grey level is shared among the four (or nine, in some cases) closest pixels, according to their distance from the position of the transformed point.
+    This method tends to produce blurry edges in the transformed image.
+\end{itemize}
+
+\noindent One method is not inherently better than the other, so the best interpolation policy should be chosen according to the needs of the application.
+
+A geometric operation therefore needs both the geometric transformation and the correct grey level interpolation policy.
+
+\subsection{Applications}
+
+The most common applications of geometric operations include the reduction of the distortions that occur during the acquisition of the images (once the best \textit{correction} is found, it can be applied to all the images acquired by the device, effectively becoming a step in the calibration), and the \textit{registration}, or alignment, of multispectral images.
+
+\subsection{Image fusion}
+
+To provide more information to the observer, different images of the same subject, obtained using different parts of the electromagnetic spectrum, can be fused together after the registration operated by a geometric transformation.
+This technique is very common in nuclear medicine.
+
+\section{Grey level operations}
+
+\textbf{Grey level operations} act on the gray level of each pixel in an image.
+They can be grouped according to the input required for the process:
+
+\begin{itemize}
+    \item \textbf{Point operations}: the output value at a specific coordinate depends on the input value at that same coordinate;
+    \item \textbf{Local operations}: the output value at a specific coordinate depends on the input value in the \textit{neighbourhood} of that same coordinate;
+    \item \textbf{Global operations}: the output value at a specific coordinate depends on all the input values of the image.
+\end{itemize}
+
+The complexity is measured in \textit{operations per pixel} and it is different for every kind of operation, affecting the time required to run them.
+
+\subsection{Image histogram}
+
+Usually, the first operation that is performed on an image is the \textbf{image histogram}, which shows the distribution of grey levels without spatial information about the pixels.
+Because of the complete loss of spatial information, the histogram is not a unique representation of the image.
+It is an easy and fast computation that can help determine if the contrast is too low or if the exposure is suboptimal (narrow histogram).
+
+The image histogram can be described as a discrete function showing the number of occurrences $n_k$ for the $k$-th grey level $r$:
+
+\begin{equation}
+    p_f (r) = \frac{n_k}{n} \text{ , where } k = 0, 1, ..., L-1
+\end{equation}
+
+From a histogram, it is possible to appreciate the effect of noise on a uniform image: instead of a single value, there is a spread around the mean value.
+
+\subsection{Thresholding}
+
+\textbf{Thresholding} is an operation that converts each pixel with a grey level higher than a defined threshold to white and every other pixel to black, thereby obtaining a binary distribution.
+This is usually the first step in any segmentation and is very useful for discriminating between the foreground and background, greatly reducing noise.
+If different distributions are well separated, it is possible to set more thresholds to distinguish between different objects in the image.

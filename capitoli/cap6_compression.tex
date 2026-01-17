@@ -1,0 +1,23 @@
+\chapter{Image compression}
+
+\hrulefill
+
+\section{Aim of image compression}
+
+Since digital images can require a lot of storage, some \textbf{image compression} techniques are utilised to reduce storage space in archives or transmission time without changing the image too much.
+
+\section{Redundancy and irrelevancy}
+
+Some information can be eliminated from the image without reducing its usability.
+Removing \textit{redundant} information does not affect the quality of the image, whereas removing \textit{irrelevant} information does.
+
+\section{Lossless techniques}
+
+\textbf{Lossless algorithms} allow the exact recovering of the original image, exploiting the fact that in an image some regions can be uniform or homogeneous. 
+If noise causes small fluctuations on the grey level of consecutive pixels, it is possible to only store one grey level and the difference from that value for the other pixels.
+Some techniques allow to store smaller numbers using fewer bits, thereby reducing the storing space required for the image.
+
+\section{Lossy techniques}
+
+It is also possible to cause small degradations to an image by applying \textbf{lossy algorithms} that can force approximately uniform regions in an image to become uniform.
+Different levels of compression are available and can be chosen according to the application.

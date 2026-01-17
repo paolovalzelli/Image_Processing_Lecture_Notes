@@ -1,0 +1,200 @@
+\chapter{Feature extraction}
+
+\hrulefill
+
+\section{Representation and description}
+
+After image segmentation, objects might need to be represented and later described.
+The two possible representations are:
+
+\begin{itemize}
+    \item External (boundary): the main focus is on the shape characteristics.
+    A representation is given by the polygon that defines the boundary, whereas a description is based on some of its features;
+    \item Internal (regional): the main focus is on the regional properties.
+    The representation and description are based on the pixels inside the object.
+\end{itemize}
+
+A representation of the object can compact the data in a truthful yet compressed manner.
+From this encoded shape, it is possible to extract a list of features, properties, and descriptors.
+A \textbf{descriptor} captures the essential differences among distinct objects, making it suitable for classification and ensuring that it is invariant to noise.
+
+\section{Shape representation}
+
+If it is necessary to represent an object in a simple way, for example, through the enclosing circle or rectangle, or by the boundary or skeleton, it can be desirable to utilise descriptors that are invariant to scale, rotation, and translation.
+In some contexts, however, rotation and scale can be important; for example, in optical character recognition (OCR).
+
+To achieve \textbf{boundary representation}, the first step in feature extraction, it is necessary to choose a definition of connectivity (4 or 8 neighbours), a starting point, and then to describe, through a \textbf{chain code}, the list of specified steps to walk through every pixel of the boundary in a clockwise direction.
+
+\noindent The main problems with this technique are represented by the length of the chain code and its sensitivity to noise.
+It is possible to address both of them by simply using a larger grid spacing, which results in a shorter code that is more robust to noise.
+Optimal resolution should be chosen according to the case.
+The starting point determines the result, but it is possible to treat the code as circular and sort it to retrieve the minimum magnitude integer; this way, the chain code becomes independent of the starting point.
+The chain code depends on the rotation of the object boundary; however, it is possible to calculate the \textit{difference code}, which counts the number of direction changes that separate two adjacent elements of the code in the counterclockwise direction.
+The final chain code becomes independent of the rotation of the region.
+
+\subsection{Polygonal approximations}
+
+A polygon can approximate the representation of a boundary, capturing the essence of the object shape with the fewest possible segments.
+Approximation is usually achieved through an iterative process, where the main examples are:
+
+\begin{itemize}
+    \item Minimum perimeter polygons (MPP);
+    \item Merging techniques;
+    \item Splitting techniques.
+\end{itemize}
+
+\subsubsection{Minimum perimeter polygons}
+
+The boundary is covered with cells of a chosen size, and a polygon shrinks to fit inside these cells with the shortest possible perimeter.
+The size of the grid determines the number of segments in the final perimeter; therefore, it must be chosen according to the requirements.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{immagini/mpp.png}
+    \caption{An object boundary, the cells that enclose it and its minimum perimeter polygon.}
+    \label{fig:mpp}
+\end{figure}
+
+\subsubsection{Splitting techniques}
+
+\textbf{Splitting techniques} are iterative processes that start from an initial guess, then calculate the distance from the segment to the centre of each pixel on the boundary.
+If this distance exceeds a set threshold, a new vertex is created.
+The procedure is repeated until every point meets the criterion.
+The only parameter to set with this technique is the threshold on the distance.
+
+\subsubsection{Skeletons}
+
+One effective way to compress information about the shape of an object without resorting to the representation of its boundary is to use the morphological operation \textbf{skeleton}, which allows for the reduction of the structural shape of a region to a graph.
+
+\section{Shape descriptors}
+
+\subsection{Descriptors}
+
+After the representation step, the objects need to be described in order to classify them later.
+It is therefore necessary to obtain a list of features that compress the information without resorting to a complete description of each object.
+The \textbf{descriptors} become labels for the objects serving as inputs for subsequent object classification.
+The features can be extracted from both the boundary and the grey levels of the pixels in the internal region.
+
+\subsection{Fourier Descriptors}
+
+The coordinates of each pixel on the boundary in the $xy$ space become the real and imaginary parts of a complex number on which it is possible to perform a Fourier transform to generate the \textbf{Fourier descriptors} (FD).
+By performing the inverse Fourier transform on a subset of these descriptors, a compressed approximation of the original boundary is retrieved.
+For each pixel $k$, the associated complex number is given by:
+
+\begin{equation}
+    s(k) = [x(k), y(k)] = x(k) + iy(k), \qquad k=0,1,...,K-1
+\end{equation}
+
+\noindent From the DFT of these complex numbers, the complex Fourier descriptors in the frequency space are obtained:
+
+\begin{equation}
+    a(u) = \sum_{k=0}^{K-1}s(k)e^{- \dfrac{2 i \pi uk}{K}}, \qquad u=0,1,...,K-1
+\end{equation}
+
+\noindent The original coefficients $s(k)$ are restored through an inverse FT:
+
+\begin{equation}
+    s(k) = \frac{1}{K} \sum_{u=0}^{K-1}a(u)e^{\dfrac{2 i \pi uk}{K}}, \qquad k=0,1,...,K-1
+\end{equation}
+
+\noindent An approximate reconstruction can be obtained by a subset of $P$ Fourier coefficients:
+
+\begin{equation}
+    \hat{s}(k) = \frac{1}{P} \sum_{u=0}^{P-1}a(u)e^{\dfrac{2 i \pi uk}{K}}, \qquad k=0,1,...,K-1
+\end{equation}
+
+\noindent For $k=0$, $s(k)$ represents the position of the centre of the boundary.
+Each descriptor $a(u)$ describes a feature; therefore, by increasing the number of components in the description, sharper details are rendered.
+Usually, a small fraction of the original components renders a good reconstruction of the original shape.
+
+\subsubsection{Properties of the Fourier descriptors}
+
+The properties of Fourier transforms also apply to the descriptors:
+
+\begin{itemize}
+    \item Translation: a translation only affects the first term of the FD; that is, the DC component;
+    \item Scaling: after scaling, each FD is scaled by the same factor as the original image;
+    \item Rotation: the FDs are invariant under rotation;
+    \item Starting point: the magnitude of the FDs is invariant under a change in the starting point.
+\end{itemize}
+
+\subsection{Statistical moments}
+
+In some cases, the FDs are not necessary for the required description of the boundary, and a simpler approach can be followed.
+A part of a boundary can be considered a distribution if the first and last points lie on the $r$ axis of an arbitrary value.
+The \textbf{statistical moments} represent statistical measures of data that can describe useful information about the shape.
+
+If $r$ is a random variable and $g(r_i)$ is a normalised distribution, the moments are defined by:
+
+\begin{equation}
+    \mu_n(r) = \sum_{k=0}^{K-1} (r_i - m)^n g(r_i), \qquad m = \sum_{i=0}^{K-1} r_i g(r_i)
+\end{equation}
+
+\noindent Moments come in integer orders:
+
+\begin{itemize}
+    \item order 0 is the number of points in the data;
+    \item order 1 is the sum; it is used to find the mean;
+    \item order 2 is the variance; it describes the spread around the mean;
+    \item order 3 is the skewness; it describes the symmetry around the mean.
+\end{itemize}
+
+\section{Regional descriptors}
+
+\subsection{Regional features}
+
+\textbf{Regional descriptors} can focus only on the boundary pixels, or they can also consider the grey levels of the pixels in the internal region:
+
+\begin{itemize}
+    \item area: it is given by the number of pixels in the region;
+    \item perimeter: it is given by the number of pixels that are connected to the background;
+    \item compactness: it combines area and perimeter, allowing for a basic measurement of roundness $P2A = \dfrac{(2p)^2}{A}$.
+    It is equal to 1 for a circle and larger for long and thin shapes;
+    \item mean, median, minimum, and maximum values: they depend on the grey levels of the pixels.
+\end{itemize}
+
+\noindent By combining  different regional descriptors, it is possible to distinguish between various kinds of shapes.
+
+\subsection{Statistical features of texture}
+
+To describe the \textbf{texture} of a region, defined as the smoothness or roughness of a surface, it is necessary to consider the grey level of the pixels.
+It captures the patterns, repetitiveness, and granularity of a region.
+There are various texture features, including statistical, structural, and spectral ones.
+
+\noindent \textbf{Statistical features} are retrieved from the normalised histogram of the region and from the variance of the grey level distribution.
+If $z$ represents a random variable denoting grey levels and $p(z_i)$, where $i=0,1,...,L-1$, represents the histogram, it is possible to define the $n^{th}$ moment of $z$:
+
+\begin{equation}
+    \mu_n (z) = \sum_{k=0}^{L-1}(z_i-m)^np(z_i), \qquad m = \sum_{i=0}^{L-1}z_ip(z_i)
+\end{equation}
+
+The main statistical features are:
+
+\begin{itemize}
+    \item roughness: $$R=1-\dfrac{1}{1+\sigma^2 (z)}$$
+    It is equal to 0 for uniform objects and tends to 1 for larger values of the variance;
+    \item uniformity: $$U = \sum_{i=0}^{L-1} p^2 (z_i)$$
+    It reaches the maximum when there is only one grey level in the image;
+    \item average entropy: $$e=- \sum_{i=0}^{L-1}p(z_i) \log_2 p(z_i)$$
+    In a constant image, it is equal to 0.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{immagini/texture.jpg}
+    \caption{Statistical features of three images with different textures.}
+    \label{fig:texture}
+\end{figure}
+
+\noindent The standard deviation and, therefore, the roughness allow for the identification of smooth regions; the highest uniformity is reached when the entropy is lowest.
+
+The main limitation of the statistical approach is that the histogram is not a unique representation of an image; therefore, if two distinct images share the same histogram, their statistical features will be equal.
+This approach does not consider the spatial information of the texture.
+
+\subsection{Co-occurrence matrix}
+
+In order to take into account the spatial information of the texture, it is possible to consider a displacement vector $\vec{P}$ to generate a \textbf{co-occurrence matrix}.
+In this matrix, each entry $a_{ij}$ represents the number of times a pixel with a grey level $z_i$ is in a relative position $\vec{P}$ with respect to a pixel with a grey level $z_j$.
+The matrix is then normalised so that the entries represent probabilities.
+Usually, a number of displacement vectors are considered to obtain a set of co-occurrence matrices that become descriptors from which it is possible to extract features of the texture.
+The more similar the textures in two different images are, the more similar their matrices become.

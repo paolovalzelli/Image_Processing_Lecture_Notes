@@ -1,0 +1,69 @@
+\chapter{\textcolor{colore8}{ImageJ laboratory}}
+
+\hrulefill
+
+\section{\textcolor{colore8}{ImageJ}}
+
+\textbf{\textcolor{colore8}{ImageJ}} is a free multiplatform software, for which a huge variety of tools and forums are available.
+To start working on an image it is sufficient to drop it on the toolbar, where a window shows general information about it (for example resolution, dimensions, type).
+
+\subsection{\textcolor{colore8}{Basic operations}}
+
+ImageJ allows to apply many algorithms of image processing, for example basic geometric (\texttt{Image $\longrightarrow$ Scale}, radiometric, mathematical and logical operations, both linear and non-linear.
+To plot the histogram of the grey levels of the image it is possible to use \texttt{Analyze $\longrightarrow$ Histogram}, and by clicking on \texttt{List} the number of pixels with each grey level is shown in a list.
+The interpolation policy can be managed in \texttt{Image $\longrightarrow$ Transform}.
+Thresholding can be performed by clicking on \texttt{Image $\longrightarrow$ Adjust $\longrightarrow$ Threshold}.
+In the same menu many other point operations are available.
+\texttt{Process $\longrightarrow$ Math} provides many possible mathematical operations.
+It is possible to carry out point by point operations between two images in \texttt{Process $\longrightarrow$ Image Calculator}.
+
+It is possible to choose the fraction of outliers to be eliminated or to perform histogram equalisation in \texttt{Process $\longrightarrow$ Enhance Contrast}.
+
+\subsection{\textcolor{colore8}{Local operations}}
+
+The menu \texttt{Process} allows for many \textbf{local operations}, such as:
+
+\begin{itemize}
+    \item \texttt{Smooth} reduces noise;
+    \item \texttt{Find Edges} detects edges;
+    \item \texttt{Filters} provides a variety of filters, for example \texttt{Convolve} allows the choice of the kernel.
+\end{itemize}
+
+\texttt{Process $\longrightarrow$ Binary} provides a variety of logical operations.
+
+\subsection{\textcolor{colore8}{Fourier operations}}
+
+From the menu \texttt{Process $\longrightarrow$ FFT} (Fast Fourier transform) it is possible to change the settings of the transform operation in \texttt{FFT Options}.
+\texttt{raw} gives as an output the spectrum in linear scale, instead of logarithmic, so that only the DC component is visible; whereas \texttt{complex} shows two windows, one for the real and one for the imaginary part of the spectrum.
+
+\noindent The colour selector and the paintbrush in the toolbar allow for the manual modification of an image; therefore, they can be used to cut the undesired frequencies from a spectrum.
+
+\noindent To apply a filter to the spectrum, it is possible to go to the menu \texttt{Process $\longrightarrow$ Filters $\longrightarrow$ Show circular masks} to choose the cutoff frequency to apply to the spectrum.
+
+\noindent Once a mask is selected, it is possible to utilise it as a filter and carry out the filtering operation with a Fourier transform from \texttt{Image $\longrightarrow$ Duplicate}.
+Another way to achieve this result is to use \texttt{Process $\longrightarrow$ FFT $\longrightarrow$ Custom Filter} or to manually cut out the undesired frequencies with a black paintbrush.
+
+\section{\textcolor{colore8}{Image Analysis}}
+
+It is possible to analyse only a portion of the image by selecting a line with the desired thickness using \texttt{Analyze $\longrightarrow$ Plot Profile} or by considering a wider region of interest.
+
+\noindent To calculate the \textbf{signal to noise ratio}, it is necessary to select the mean and standard deviation in \texttt{Analyze $\longrightarrow$ Set Measurements} and then obtain the required information by choosing \texttt{Analyze $\longrightarrow$ Measure}.
+The SNR can be used to assess the improvement in the quality of the image.
+
+\noindent To compare two versions of the same image, it is possible to consider specific regions of interest (ROI) by selecting \texttt{Analyze $\longrightarrow$ Tools $\longrightarrow$ ROI Manager}.
+
+\section{\textcolor{colore8}{Feature extraction}}
+
+From \texttt{Analyze $\longrightarrow$ Analyze Particles}, it is possible to compute the count of the objects in the image, label them, and obtain a list of features such as area and grey level for each of them.
+These features can be chosen from \texttt{Analyze $\longrightarrow$ Set Measurements}.
+A threshold can be set on the size or on the circularity to exclude the undesired objects.
+
+\noindent To perform a list of operations on a series of registered images in a set, it is possible to write a \textbf{Macro} code from \texttt{Plugins $\longrightarrow$ Macros $\longrightarrow$ Record}.
+This way, every operation that is performed on the image is coded in a script that can later be repeated on another image.
+To run a copy of this code, it is necessary to copy the macro in \texttt{Plugins $\longrightarrow$ New $\longrightarrow$ Macro}.
+A complete list of the meanings of each operation in the macro is available on the ImageJ website.
+Finally, to apply the same list of operations on a set of images, it is necessary to select \texttt{Process $\longrightarrow$ Batch $\longrightarrow$ Macro}, click on the desired folder and copy the macro code.
+
+%\section{\textcolor{colore8}{}}
+
+%\section{\textcolor{colore8}{}}

@@ -1,0 +1,199 @@
+\chapter{Image segmentation}
+
+\hrulefill
+
+\section{Introduction to image segmentation}
+
+After the preprocessing step (as visually described in fig. ~\ref{fig:steps}), \textbf{image segmentation} allows for the partitioning of an image into meaningful regions.
+Basic noise reduction, for example, through smoothing, should be conducted before image segmentation to ensure better results.
+This step makes it possible to identify different objects and extract a list of features from each one.
+The main applications comprise object identification, machine vision, and pattern recognition.
+
+To divide the regions, the main approaches are based on:
+
+\begin{itemize}
+    \item \textbf{Similarity} between the pixels belonging to the same object;
+    \item \textbf{Discontinuity} that defines the edges of the said objects.
+\end{itemize}
+
+\section{Detection of discontinuities}
+
+There are three kinds of discontinuities that can be recognised by edge detection: points, lines, and edges.
+It is possible to scan a small mask over the image to look for discontinuities with a defined shape.
+The convolution between the image and a kernel allows for the detection of such discontinuities, using both first and second derivatives.
+The main limitation is due to the amplification of noise by the derivatives.
+
+\section{Edge detection and linking}
+
+\subsection{Gradient operators}
+
+The gradient of an image is a vector defined as:
+
+$$\nabla \mathbf{f} = \begin{bmatrix}
+    G_x \\ G_y
+\end{bmatrix} = \begin{bmatrix}
+    \dfrac{\partial f}{\partial x} \\ \dfrac{\partial f}{\partial y}
+\end{bmatrix}$$
+
+which magnitude is given by $\nabla f = mag(\nabla \mathbf{f}) = \sqrt{G_x^2 + G_y^2}$ and which direction is given by the vector $\alpha(x,y) = \arctan \left( \dfrac{G_x}{G_y} \right)$.
+
+\subsection{Canny edge detector}
+
+This tool can work even with images that are corrupted by white noise, correctly locating and marking all real edges exactly where they are located, with minimal thickness.
+The steps of this operation are as follows:
+
+\begin{enumerate}
+    \item Noise reduction: the image is smoothed, usually with a Gaussian filter;
+    \item Gradient computation: both magnitude and direction are calculated at each pixel;
+    \item Edge thinning: a local analysis is conducted to define the pixel in which the magnitude of the gradient reaches the maximum value along the direction of the gradient as the true edge;
+    \item Edge linking: gaps between close edges are filled, linking together pixels with similar magnitude and direction along the direction of the edge, and isolated pixels are removed.
+\end{enumerate}
+
+\section{Edge linking}
+
+The step that follows edge detection in image segmentation is represented by \textbf{edge linking}, which can be achieved through two distinct approaches: local and global processing.
+
+The \textbf{local approach} for edge linking closely resembles the canny edge detection, connecting together close pixels that have a similar gradient.
+
+\subsection{Global processing using the Hough transform}
+
+The global approach for edge linking is usually performed by exploiting the \textbf{Hough transform} of a binary edge image.
+It is a way to find edge points that lie along a straight line, but it can also be used for simple curves, such as circles.
+The Hough transform maps points from the $xy$ image into straight lines in the $ab$ plane, referred to as the parameter space: $y_i = ax_i + b$.
+The points that accumulate the largest amount of contributions in this space identify a clear edge in the image.
+
+The main limitation of this transformation is represented by the impossibility to correctly visualise vertical lines, so it is usually preferred to use polar coordinates: $\rho = x \sin{\theta} + y \cos{\theta}$ instead of Cartesian coordinates.
+In this representation, the pairs of $\theta$ and $\rho$ that are plotted in the parameter space appear as a sine wave.
+After repeating the process for all appropriate pixels, a 2-dimensional histogram will appear in the $ab$ space.
+The accumulator cells with the highest concentrations correspond to the main edges.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{immagini/hough.jpg}
+    \caption{Example of Hough transform of a straight line.}
+    \label{fig:hough}
+\end{figure}
+
+\section{Grey level thresholding}
+
+Image segmentation can be conducted by assigning pixels with similar grey levels to the same objects.
+The noise needs to be characterised to assess the quality of the image before and after the processing.
+In a grey level histogram, high noise can cause the distributions corresponding to the object and the background to overlap, making it harder to choose the appropriate threshold.
+
+The \textbf{signal-to-noise ratio} (SNR), or contrast-to-noise ratio, is defined as the ratio between the contrast of the object and background and the fluctuations in grey levels due to noise, given by the standard deviation of the distribution:
+
+\begin{equation}
+    S/N = \frac{|\mu_b - \mu_o|}{\sigma}
+\end{equation}
+
+Usually, the $S/N$ ratio has to be higher than 5 to be perceived by the naked eye.
+
+\noindent There are many approaches to choose from for the threshold to use in grey level thresholding, where it is not possible to set it manually:
+
+\begin{itemize}
+    \item Global threshold;
+    \item Local threshold;
+    \item Adaptive threshold;
+    \item Minimisation method.
+\end{itemize}
+
+\subsection{Basic global thresholding}
+
+In an iterative approach, the final result does not depend heavily on the starting point.
+The steps are as follows:
+
+\begin{enumerate}
+    \item Selection of the initial threshold that differentiates between two groups of pixels: $G_1$, where the grey level is lower than the threshold $T$, and $G_2$;
+    \item Computation of the average grey level in each group, respectively $m_1$ and $m_2$;
+    \item New threshold value given by $T = \dfrac{1}{2} (m_1 + m_2)$;
+\end{enumerate}
+
+These steps are repeated until the difference between the values of T in successive iterations is smaller than a predefined parameter $\Delta T$.
+The process works very well when the noise is negligible and the distributions are well separated.
+On the contrary, if the noise causes the misclassification of a large number of pixels, it is necessary to apply a minimisation algorithm.
+
+The goal of the \textbf{optimal global and adaptive thresholding} algorithm is to minimise the probability of misclassifying pixels, whose grey levels are treated as probability density functions.
+
+\subsection{Otsu thresholding}
+
+Every group of pixels into which the image is divided by thresholding has some statistics, such as the mean and the variance, that allow for the definition of a \textbf{within group variance}, which can be minimised by the choice of the optimal threshold.
+Homogeneity is, therefore, measured for each possible grey level that the threshold can assume.
+The prior probability that a pixel belongs to one of the groups is given by:
+
+\begin{equation}
+    p_o (T) = \sum_{i=0}^T P(i) \qquad p_b (T) = \sum_{i = T + 1}^{255} P(i), \qquad  P(i) = \frac{h(i)}{N}
+\end{equation}
+
+\noindent where $h(i)$ is the histogram of an $N$ pixel image.
+
+\noindent The within group variance is given by the variance in each group:
+
+\begin{equation}
+    \sigma_W^2 (T) = \sigma_o^2 (T) p_o (T) + \sigma_b^2 (T) p_b (T)
+\end{equation}
+
+\noindent The Otsu thresholding algorithm calculates this expression for every possible grey level and then determines the optimal value of $T$ as the one that minimises it.
+
+\subsection{Basic adaptive thresholding}
+
+Illumination can create a heterogeneous background in the image, and this can negatively affect segmentation through thresholding.
+One common solution is represented by \textbf{image partitioning}, which subdivides the image into smaller rectangles to which thresholding is then applied.
+A \textbf{local threshold} ensures a more uniform background in each region.
+This technique is applied in most real images since it is rarely possible to obtain a uniform background.
+Thresholding in some subregions can yield poor results if the vast majority of the pixels are of the same type (i.e., object or background); thus, further subdivisions or a manual threshold can solve the problem.
+
+\section{Region-based segmentation}
+
+\textbf{Region-based segmentation} does not rely on edges or thresholds, but on the connectivity of similar pixels in a region.
+The three main approaches for region-based segmentation are:
+
+\begin{itemize}
+    \item region growing;
+    \item clustering;
+    \item region splitting.
+\end{itemize}
+
+\noindent From the entire region $R$, segmentation partitions it into subregions $R_i$ such that:
+
+\begin{enumerate}
+    \item $\displaystyle\bigcup_{i=1}^n R_i = R$: the partition covers the entire region;
+    \item each subregion $R_i$ is connected according to the chosen definition of connectivity;
+    \item $R_i \bigcap R_j = \emptyset \quad \forall \; i, j : i \ne j$: the subregions do not intersect;
+    \item $P(R_i) =$ TRUE, where $P(R_k)$ is a logical predicate defined over the points in the subregion $R_k$: the homogeneity predicate must be true for every pixel inside the subregion;
+    \item $P(R_i \cup R_j) =$ FALSE, for any adjacent regions $R_i$ and $R_j$: the union of adjacent subregions does not satisfy the homogeneity predicate.
+\end{enumerate}
+
+\noindent The definition of the \textbf{homogeneity predicate} must then be able to capture the features that characterise the similarity of the pixels inside a meaningful region.
+
+\subsection{Region growing}
+
+\textbf{Region growing} is an iterative procedure that starts from an initial point, referred to as \textit{seed}, and then adds the connected pixels that have similar properties satisfying the same predicate.
+Different definitions of connectivity yield different segmentations.
+The seeds can be chosen both manually and automatically.
+This approach is more robust to noise than others that are edge-based.
+
+\subsection{Split and merge}
+
+\textbf{Split and merge} is an iterative procedure that starts with the entire image without the need for a seed.
+It cheques if the predicate is true, and whenever it is false, it splits it into smaller subregions (very often using the \textit{quadtree} structure) and cheques again.
+The procedure continues until all resulting subregions are uniform or until a threshold for the minimum size is reached.
+The last step merges adjacent quadrants for which the union satisfies the predicate until this is no longer possible.
+
+\subsection{K-means clustering}
+
+\textbf{K-means clustering} groups together data points in a previously chosen number $K$ of clusters according to their distance from the centroid, as defined by a set of variables.
+It is an iterative process in which each data point is assigned to the closest cluster; then its centroid is recomputed.
+The clusters are defined by the selected features in a multidimensional space of variables.
+The process is repeated until there is no further change in the assignment of data points.
+
+\noindent The optimal value of $K$ should ideally be equal to that of the meaningful regions in the image.
+Usually, a small number of clusters ensures higher compression, whereas a large number allows for higher accuracy but leads to smaller regions.
+It is possible to measure the compactness and homogeneity of the clusters with the \textbf{Within-cluster sum of squares} (WCSS).
+The optimal value of $K$ can then be chosen using the \textit{elbow method}; that is, by finding the number of clusters for which adding another one only reduces the WCSS by a small amount.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{immagini/elbow.png}
+    \caption{Elbow method.}
+    \label{fig:elbow}
+\end{figure}
